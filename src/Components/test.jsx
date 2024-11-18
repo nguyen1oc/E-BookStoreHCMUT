@@ -4,38 +4,38 @@ import { VscBell } from "react-icons/vsc";
 import { BsCart3 } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 
-function LHeader({ cart = []}) {
+function LHeader({ cart = [] }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isBellHovered, setIsBellHovered] = useState(false); 
+  const [isBellHovered, setIsBellHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [timer, setTimer] = useState(null);
-  const [isLogoutPopupVisible, setIsLogoutPopupVisible] = useState(false); // State for logout popup
+  const [isLogoutPopupVisible, setIsLogoutPopupVisible] = useState(false);
 
   const navigate = useNavigate();
 
-  const CartEnter = () => {
+  const handleCartEnter = () => {
     if (timer) clearTimeout(timer);
     setIsCartHovered(true);
   };
 
-  const CartLeave = () => {
+  const handleCartLeave = () => {
     const newTimer = setTimeout(() => {
       setIsCartHovered(false);
-    }, 200); // Adjust the delay as needed
+    }, 200); // Delay to hide the cart popup
     setTimer(newTimer);
   };
 
-  const BellEnter =()=>{
+  const handleBellEnter = () => {
     if (timer) clearTimeout(timer);
     setIsBellHovered(true);
-  }
+  };
 
-  const BellLeave =()=>{
+  const handleBellLeave = () => {
     const newTimer = setTimeout(() => {
       setIsBellHovered(false);
-    }, 200); // 300ms delay (adjust as needed)
+    }, 200); // Delay to hide the notification popup
     setTimer(newTimer);
-  }
+  };
 
   const handleMouseEnter = () => {
     if (timer) clearTimeout(timer);
@@ -45,7 +45,7 @@ function LHeader({ cart = []}) {
   const handleMouseLeave = () => {
     const newTimer = setTimeout(() => {
       setIsHovered(false);
-    }, 300); // 300ms delay (adjust as needed)
+    }, 300); // Delay to hide account menu
     setTimer(newTimer);
   };
 
@@ -77,21 +77,15 @@ function LHeader({ cart = []}) {
         </nav>
 
         <div className="flex items-center space-x-5">
-          <nav className="hidden sm:flex space-x-10"
-          onMouseEnter={CartEnter}
-          onMouseLeave={CartLeave}
-          >
-            <div className="relative">
-              <BsCart3 size={45} className="text-white hover:text-[#F6B17A]" />
-                {/* Cart Item Count */}
-              {cart.length >= 0 && (
-              <div className="absolute top-0 right-0 text-xs text-white bg-red-400 rounded-full px-2 py-1">
+          <nav className="relative flex space-x-10" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
+            <BsCart3 size={45} className="text-white hover:text-[#F6B17A]" />
+            {cart.length > 0 && (
+              <div className="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-2 py-1">
                 {cart.length}
               </div>
-              )}
-            </div>
-           {/* Display the cart items when hovered */}
-           {isCartHovered && cart.length >= 0 && (
+            )}
+
+            {isCartHovered && cart.length > 0 && (
               <div className="absolute top-12 right-0 w-64 bg-white shadow-lg rounded-lg p-3 z-50">
                 <h3 className="text-xl font-semibold mb-3">Your Cart</h3>
                 <ul>
@@ -108,27 +102,23 @@ function LHeader({ cart = []}) {
               </div>
             )}
           </nav>
+
           <button className="md:hidden text-white">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-10 h-10">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
-          <div className="flex items-center space-x-5">
-            <nav className="hidden md:flex space-x-10"
-               onMouseEnter={BellEnter}
-               onMouseLeave={BellLeave}
-            >
+          <div className="relative flex items-center space-x-5">
+            <nav className="hidden md:flex space-x-10" onMouseEnter={handleBellEnter} onMouseLeave={handleBellLeave}>
               <VscBell size={45} className="text-white hover:text-[#F6B17A]" />
               {isBellHovered && (
-              <div className="absolute right-10 mt-2 w-48 bg-white shadow-lg rounded-md z-5">
-                <ul className="py-2 text-[#7077A1]">
-                  <li className="px-4 py-2 text-center">
-                    Don't have any notifications
-                  </li>
-                </ul>
-              </div>
-            )}
+                <div className="absolute right-10 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
+                  <ul className="py-2 text-[#7077A1]">
+                    <li className="px-4 py-2 text-center">Don't have any notifications</li>
+                  </ul>
+                </div>
+              )}
             </nav>
 
             <div
@@ -141,9 +131,7 @@ function LHeader({ cart = []}) {
                 <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
                   <ul className="py-2 text-[#7077A1]">
                     <li className="px-4 py-2 hover:bg-gray-200 hover:text-[#F6B17A] cursor-pointer">
-                      <Link to="/profile">
-                        Your Account
-                      </Link>
+                      <Link to="/profile">Your Account</Link>
                     </li>
                     <li
                       className="px-4 py-2 hover:bg-gray-200 hover:text-[#F6B17A] cursor-pointer"
