@@ -13,6 +13,7 @@ function Header() {
     setShowPopup(!showPopup); // Toggle visibility of the login popup
   };
 
+
   return (
     <>
       <header id="header" className="bg-[#2D3250]">
