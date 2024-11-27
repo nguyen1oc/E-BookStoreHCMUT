@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 function LoginButton() {
   return (
     <>
+
+      {/* Chon 3 vai tro cua nguoi dung thoi */}
       <LogHeader />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">

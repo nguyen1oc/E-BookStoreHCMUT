@@ -15,9 +15,16 @@ import PPage from "./Components/Author/PPage";
 import UserCart from "./Components/User/UserCart";
 import Signup from "./Components/Login/SignUp";
 import Forget from "./Components/Login/Forget";
+import ABook from "./Components/Author/Abook";
+import ABookSec from "./Components/Author/ABookSec";
+import AProfile from "./Components/Author/AProfile";
+import AuthorCart from "./Components/Author/AuthorCart";
+import PBody from "./Components/Publisher/PubPage";
+
+
+// Cac phan import co may cai bi du nhung ma t luoi qa nen k xoa
 
 function App() {
-  const [cart, setCart] = useState([]);
 
   return (
     <Router>
@@ -38,10 +45,19 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/booksec" element={<BookSec/>} />
         <Route path="/cart" element={<UserCart/>} />
-        {/*publiser*/}
-        <Route path="/publisherdashboard" element={<PPage />} />
+        <Route path="/profile/*" element={<Profile />} />
+
         {/*author*/}
-        
+        <Route path="/authordashboard" element={<PPage />} />
+        <Route path="/abooks" element={<ABook />} />
+        <Route path="/aprofile" element={<AProfile />} />
+        <Route path="/abooksec" element={<ABookSec/>} />
+        <Route path="/acart" element={<AuthorCart/>} /> 
+        <Route path="/aprofile/*" element={<AProfile />} />
+
+        {/*publisher*/}
+        <Route path="/publisherdashboard" element={<PBody />} />
+
       </Routes>
     </Router>
   );

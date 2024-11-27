@@ -5,6 +5,7 @@ import LFooter from "./LFooter";
 import LogHeader from "./LoginHeader";
 
 function LoginForm() {
+  // Cac ham de giu cac du lieu va chuyeh huong
   const navigate = useNavigate();
   const location = useLocation();
   const { userType } = location.state || {}; 
@@ -28,6 +29,7 @@ function LoginForm() {
 
   return (
     <>
+      {/* Muc login cua page */}
       <LogHeader />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">

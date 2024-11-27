@@ -1,21 +1,12 @@
 import React, { useState } from "react";
-import LHeader from "../User/LHeader";
-//import Footer from "../Log/Footer";
 import Footer from "../Log/Footer";
-import LoginForm from "../Login/LoginForm";
+import AHeader from "../Author/AHeader.jsx";
 
 function LBody() {
-  // State to track whether the "Learn More" section is expanded
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  // Handler to toggle the expanded state
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
-  };
 
   return (
     <>
-      <LHeader/>
+      <AHeader/>
       {/* Welcome Section */}
       <div
         id="home"
@@ -29,7 +20,7 @@ function LBody() {
         />
         {/* Welcome Message */}
         <h2 className="absolute ml-10 lg:justify-center text-[#070F2B] text-bold text-5xl">
-          HI PUBLISHER!!!!!!!!!!!
+          HI AUTHORRRRRRRRRRRRRRRR!!
         </h2>
       </div>
       <Footer/>

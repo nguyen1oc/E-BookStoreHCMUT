@@ -15,7 +15,7 @@ function UserCart() {
     return cartItems.length;
   };
 
-  // Tính giá trị giảm giá nếu số lượng sản phẩm nhiều hơn 5
+  // Cho nay t dang tinh discount tuong trung Th >5 thi giam
   const calculateDiscount = () => {
     const totalItems = calculateTotalItems();
     const totalPrice = calculateTotalPrice();

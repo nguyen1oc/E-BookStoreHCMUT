@@ -22,7 +22,7 @@ const NameBook = [
           content: "Rất tốt, nhưng một số nội dung hơi trùng lặp."
         },
       ],
-      conditions: "Affordable",
+      conditions: "Avaiable",
     },
     {
       Book_ID: 2,
@@ -47,7 +47,7 @@ const NameBook = [
           content: "Rất tốt, nhưng một số nội dung hơi trùng lặp."
         },
       ],
-      conditions: "Affordable",
+      conditions: "Avaiable",
     },
     {
       Book_ID: 3,

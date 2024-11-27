@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import LHeader from "./LHeader";
+import AHeader from "./AHeader";
 import Footer from "../Log/Footer";
 import NameBook from "../BookTittle"; // Danh sách sách
 import ReactPaginate from "react-paginate";
 import { useNavigate } from "react-router-dom";
 
-const LBook = () => {
+const ABook = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const booksPerPage = 8; // Số sách hiển thị trên mỗi trang
@@ -19,14 +19,13 @@ const LBook = () => {
 
   const navigate = useNavigate();
 
-  //luu thong tin cua book de chuyen trang detail
   const handleBookClick = (book) => {
-    navigate("/booksec", { state: { book } });
+    navigate("/abooksec", { state: { book } });
   };
 
   return (
     <>
-      <LHeader />
+      <AHeader />
       {/* Thanh tìm kiếm */}
       <div className="container mx-auto p-4">
         <div className="flex justify-center mb-6 mt-6">
@@ -111,4 +110,4 @@ const LBook = () => {
   );
 };
 
-export default LBook;
+export default ABook;

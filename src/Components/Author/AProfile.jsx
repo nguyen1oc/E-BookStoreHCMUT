@@ -1,53 +1,55 @@
 import React from "react";
 import { Link, Routes, Route, useNavigate } from "react-router-dom";
-import LHeader from "./LHeader";
+import AHeader from "./AHeader";
 import Footer from "../Log/Footer";
 import ReactPaginate from "react-paginate";
 import { useState } from "react";
 import NameBook from "../BookTittle";
 
-const Profile = () => {
+const AProfile = () => {
   const navigate = useNavigate(); // Dùng để chuyển hướng
   const [selectedOption, setSelectedOption] = useState("My Account"); // Default option
   const [currentPage, setCurrentPage] = useState(0);
   const booksPerPage = 4;
   return (
     <>
-
-      {/* Y tuong la chia 2 bang, mot ben select cac lua chon de no hien ra
-      Ma luc dau t k co thay doi cai /url nen ngoi sua cung met T^T */}
-      <LHeader />
+      <AHeader />
       <h1 className="text-center font-bold text-5xl mt-4 text-[#2D3250]">INFORMATION PAGE</h1>
       <div className="mt-15 ml-20 mr-20 p-6 flex">
         {/* LEFT SIDE */}
         <div className="w-1/3 p-6">
           <ul className="text-right text-[#2D3250]">
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
-              <Link to="/profile/information">My Information</Link>
+              <Link to="/aprofile/ainformation">My Information</Link>
             </li>
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
-              <Link to="/profile/order-items">Order Items</Link>
+              <Link to="/aprofile/aorder-items">Order Items</Link>
             </li>
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
-              <Link to="/profile/notification">Notifications</Link>
+              <Link to="/aprofile/anotification">Notifications</Link>
             </li>
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
-              <Link to="/profile/books">Your Books</Link>
+              <Link to="/aprofile/abooks">Your Books</Link>
             </li>
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
-              <Link to="/profile/password">Change Password</Link>
+            <Link to="/aprofile/authorbooks">Author's Books</Link>
+            </li>  
+            <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
+              <Link to="/aprofile/apassword">Change Password</Link>
             </li>
+            
           </ul>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="w-2/3 p-6 bg-gray-300">
           <Routes>
-            <Route path="information" element={<Information />} />
-            <Route path="order-items" element={<OrderItems />} />
-            <Route path="notification" element={<Notification />} />
-            <Route path="books" element={<Books />} />
-            <Route path="password" element={<Password />} />
+            <Route path="ainformation" element={<AInformation />} />
+            <Route path="aorder-items" element={<AOrderItems />} />
+            <Route path="anotification" element={<ANotification />} />
+            <Route path="abooks" element={<ABooks />} />
+            <Route path="apassword" element={<APassword />} />
+            <Route path="authorbooks" element={<AuthorBooks />} />
             <Route path="*" element={<p>Please select an option from the left.</p>} />
           </Routes>
         </div>
@@ -56,8 +58,55 @@ const Profile = () => {
     </>
   );
 };
+const AuthorBooks = () => (
+  <>
+        <div className="text-[#424769]">
+      <h2 className="text-2xl font-bold mb-4">Author's Books</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border border-gray-200">
+          <thead>
+            <tr className="bg-[#F6F6F6]">
+              <th className="px-4 py-2 text-left">Book ID</th>
+              <th className="px-4 py-2 text-left">Title</th>
+              <th className="px-4 py-2 text-left">Author</th>
+              <th className="px-4 py-2 text-left">Publish Date</th>
+              <th className="px-4 py-2 text-left">Price</th>
+              <th className="px-4 py-2 text-left">Condition</th>
+              <th className="px-4 py-2 text-left">Reviews</th>
+            </tr>
+          </thead>
+          <tbody>
+            {NameBook.map((book) => (
+              <tr key={book.Book_ID}>
+                <td className="border px-4 py-2">{book.Book_ID}</td>
+                <td className="border px-4 py-2">{book.title}</td>
+                <td className="border px-4 py-2">{book.author}</td>
+                <td className="border px-4 py-2">{book.Publish_date}</td>
+                <td className="border px-4 py-2">{book.price.toLocaleString()} VND</td>
+                <td className="border px-4 py-2">{book.conditions}</td>
+                <td className="border px-4 py-2">
+                  {book.review.length > 0 ? (
+                    <ul>
+                      {book.review.map((r) => (
+                        <li key={r.reviewID}>
+                          ⭐ {r.stars} - "{r.content}" <small>({r.reviewDate})</small>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "No reviews"
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+            </>
+);
 
-const Information = () => (
+const AInformation = () => (
   <div className="text-[#424769]">
     <h2 className="font-bold">YOUR PROFILE</h2>
     <h3 className="text-[#424769]">Configure your information to secure the account</h3>
@@ -70,7 +119,7 @@ const Information = () => (
         <p>Email:</p>
       </div>
       <div className="w-4/5 ml-2">
-        <p>Nguyen Thien Loc</p>
+        <p>Nguyen Thien Nam</p>
         <p>2252460</p>
         <p>0933366454</p>
         <p>deptrai@gmail.com</p>
@@ -79,7 +128,7 @@ const Information = () => (
   </div>
 );
 
-const OrderItems = () => (
+const AOrderItems = () => (
   <>
         <div className="text-[#424769]">
   <h2 className="text-2xl font-bold">Your Order History</h2>
@@ -127,7 +176,7 @@ const OrderItems = () => (
       </>
 );
 
-const Notification = () => (
+const ANotification = () => (
   <>
         <h2 className="text-2xl font-bold text-[#424769]">Notifications</h2>
         <h3 className="text-[#424769]">Here are the details of the books your notifications</h3>
@@ -136,7 +185,7 @@ const Notification = () => (
     </>
 );
 
-const Books = () => (
+const ABooks = () => (
   <>
     <div className="text-[#424769]">
     <h2 className="text-2xl font-bold">Books Purchased</h2>
@@ -175,7 +224,7 @@ const Books = () => (
   </>
 );
 
-const Password = () => (
+const APassword = () => (
   <>
               <div>
               <div className="text-[#424769]">
@@ -224,4 +273,4 @@ const Password = () => (
              </>
 );
 
-export default Profile;
+export default AProfile;

@@ -1,11 +1,11 @@
 import { useLocation } from "react-router-dom";
-import LHeader from "./LHeader";
+import AHeader from "./AHeader";
 import LFooter from "../Login/LFooter";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const BookSec = () => {
+const ABookSec = () => {
   const location = useLocation();
   const { book } = location.state || {};  
 
@@ -14,7 +14,7 @@ const BookSec = () => {
   const [stars, setStars] = useState(1);
   const [userReview, setUserReview] = useState(book?.review || []);
 
-  // Them sach vao gio hang chu yeu thong bao cho dep
+  // Hàm thêm sách vào giỏ hàng
   const handleAddToCart = () => {
     setCart([...cart, book]);
     toast.success(`${book.title} has been added to your cart!`, {
@@ -28,7 +28,7 @@ const BookSec = () => {
     });
   };
 
-  // Khi them mot cai ri viu moi vao
+  // Handle review form submission
   const handleReviewSubmit = () => {
     if (reviewContent.trim() === "") {
       toast.error("Please write a review before submitting!");
@@ -60,7 +60,7 @@ const BookSec = () => {
 
   return (
     <>
-      <LHeader />
+      <AHeader />
         
       <div className="  container bg-white p-8 rounded-lg w-3/4 mx-auto mt-10 mb-10">
       <div className="container flex lg:flex-nowrap items-center">
@@ -139,7 +139,7 @@ const BookSec = () => {
                 className={`cursor-pointer text-${stars >= star ? "yellow" : "gray"}-400`}
                 onClick={() => setStars(star)}
               >
-                ★
+                ⭐ 
               </span>
             ))}
           </div>
@@ -161,4 +161,4 @@ const BookSec = () => {
   );
 };
 
-export default BookSec;
+export default ABookSec;

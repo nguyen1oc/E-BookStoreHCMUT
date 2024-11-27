@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import LHeader from "./LHeader";
-//import Footer from "../Log/Footer";
 import Footer from "../Log/Footer";
-import LoginForm from "../Login/LoginForm";
+import AHeader from "../Author/AHeader.jsx";
 
-function LBody() {
+function PBody() {
+
   return (
     <>
-      <LHeader/>
+      <AHeader/>
+      {/* Welcome Section */}
       <div
         id="home"
         className="relative flex justify-center items-center mt-12 mb-12"
@@ -18,8 +18,9 @@ function LBody() {
           alt="Image"
           className="w-full h-[500px] object-cover opacity-50"
         />
+        {/* Welcome Message */}
         <h2 className="absolute ml-10 lg:justify-center text-[#070F2B] text-bold text-5xl">
-          ENJOY YOUR TIME IN OUR PLACE!!
+            Welcome back, Publisher!!
         </h2>
       </div>
       <Footer/>
@@ -27,4 +28,4 @@ function LBody() {
   );
 }
 
-export default LBody;
+export default PBody;

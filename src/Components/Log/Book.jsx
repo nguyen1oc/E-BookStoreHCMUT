@@ -24,7 +24,6 @@ const Book = () => {
       <Header />
       {/*Thanh tim kiem */}
       <div className="container mx-auto p-4">
-        {/* Thanh tìm kiếm */}
         <div className="flex justify-center mb-6 mt-6">
           <div className="relative w-3/5">
             <input
@@ -41,6 +40,8 @@ const Book = () => {
         </div>
       </div>
 
+      {/*Thanh phan loai */}
+      {/* You can change/update/delete this or modify for your convinience */}
       <div className="bg-[#7077A1] p-2 flex items-center justify-center mr-20 ml-20">
         <div className="flex space-x-4 hidden xl:flex">
           <p className = "px-4 py-2 text-bold text-white text-xl">ARRANGE BY:</p>
@@ -89,7 +90,7 @@ const Book = () => {
         ))}
       </div>
      
-
+      {/* Khúc dưới này chủ yếu để làm cái mục chuyển trang và giới hạn books ở mỗi trang */}
   
       </div>
       <div className="flex justify-center bg-[#7077A1] p-3 flex mr-20 ml-20">
