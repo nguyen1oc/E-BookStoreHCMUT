@@ -1,172 +1,235 @@
-const [isResetPassword, setIsResetPassword] = useState(false);
-const [isSignUp, setIsSignUp] = useState(false);
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import LFooter from "./LFooter";
+import LogHeader from "./LoginHeader";
 
-const navigate = useNavigate(); 
+function LoginForm() {
+  const [isResetPassword, setIsResetPassword] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userType } = location.state || {}; // Get user type from location state
 
-const handleForgotPassword = () => {
-  setIsResetPassword(true);
-};
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
 
-const handleSignUp = () => {
-  setIsSignUp(true); 
-};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (username && password) {
+      if (userType === "User") {
+        navigate("/userdashboard");
+      } else if (userType === "Publisher") {
+        navigate("/publisherdashboard");
+      } else if (userType === "Author") {
+        navigate("/authordashboard");
+      }
+    }
+  };
 
-const handleGoBackToLogin = () => {
-  setIsResetPassword(false);
-  setIsSignUp(false); 
-};
+  const handleForgotPassword = () => {
+    setIsResetPassword(true);
+  };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  navigate("/loginpage");
-};
+  const handleSignUp = () => {
+    setIsSignUp(true);
+  };
 
-return (
-  <div
-    id="overlay"
-    className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50"
-    onClick={(e) => {
-      if (e.target.id === "overlay") togglePopup();
-    }}
-  >
-    <div
-      className="bg-white p-8 rounded-lg w-1/3 relative"
-      onClick={(e) => e.stopPropagation()} 
-    >
-      {/* Nút đóng "X" */}
-      <button
-        className="absolute top-1.5 right-2.5 text-[#2D3250] hover:text-black text-xl"
-        onClick={togglePopup}
-      >
-        X
-      </button>
+  const handleGoBackToLogin = () => {
+    setIsResetPassword(false);
+    setIsSignUp(false);
+  };
 
-      {!isResetPassword && !isSignUp ? (
-        // Form Login
-        <>
-          <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Log In</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Username"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <div className="flex justify-between mb-4">
-              <a
-                href="#"
-                className="text-[#7077A1] hover:text-black text-sm"
-                onClick={handleForgotPassword} 
-              >
-                Forgot your password?
-              </a>
-              <a
-                href="#"
-                className="text-[#7077A1] hover:text-black text-sm"
-                onClick={handleSignUp} 
-              >
-                Sign Up
-              </a>
-            </div>
-            
-            <button
-              type="submit"
-              className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
-            >
-              Submit
-            </button>
-          </form>
-        </>
-      ) : isResetPassword ? (
-        // Form Reset Password
-        <>
-        <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Reset Password</h2>
-        <form>
-          <input
-            type="email"
-            placeholder="Email"
-            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-          />
-          <input
-            type="password"
-            placeholder="Old Password"
-            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-          />
-          <input
-            type="password"
-            placeholder="New Password"
-            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-          />
-          <button
-            type="submit"
-            className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
-          >
-            Reset Password
-          </button>
-        </form>
-        <div className="flex justify-between mt-4 mb-2">
-          <button
-            className="text-[#7077A1] hover:text-[#2D3250] text-sm"
-            onClick={handleGoBackToLogin} // Quay lại form đăng nhập
-          >
-            Back to Login
-          </button>
+  return (
+    <>
+      <LogHeader />
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">
+          {isResetPassword ? (
+             <>
+             <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Reset Password</h2>
+             <form onSubmit={handleSubmit}>
+               <div className="space-y-4">
+                 <div>
+                   <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
+                   <input
+                     type="email"
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                     placeholder="Enter email"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-[#2D3250]">Old Password:</label>
+                   <input
+                     type="password"
+                     value={oldPassword}
+                     onChange={(e) => setOldPassword(e.target.value)}
+                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                     placeholder="Enter old password"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-[#2D3250]">New Password:</label>
+                   <input
+                     type="password"
+                     value={newPassword}
+                     onChange={(e) => setNewPassword(e.target.value)}
+                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                     placeholder="Enter new password"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-[#2D3250]">Verify New Password:</label>
+                   <input
+                     type="password"
+                     value={verifyPassword}
+                     onChange={(e) => setVerifyPassword(e.target.value)}
+                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                     placeholder="Verify new password"
+                   />
+                 </div>
+               </div>
+               <button
+                 type="submit"
+                 className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
+               >
+                 Reset Password
+               </button>
+             </form>
+             <div className="flex justify-between mt-4 mb-2">
+               <button
+                 className="text-[#7077A1] hover:text-[#2D3250] text-sm"
+                 onClick={handleGoBackToLogin}
+               >
+                 Back to Login
+               </button>
+             </div>
+           </>
+          ) : isSignUp ? (
+            <>
+              <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Sign Up</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Username:</label>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter email"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Password:</label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter password"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Verify Password:</label>
+                    <input
+                      type="password"
+                      value={verifyPassword}
+                      onChange={(e) => setVerifyPassword(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Verify password"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
+                >
+                  Sign Up
+                </button>
+              </form>
+              <div className="flex justify-between mt-4 mb-2">
+                <button
+                  className="text-[#7077A1] hover:text-[#2D3250] text-sm"
+                  onClick={handleGoBackToLogin}
+                >
+                  Back to Login
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-center mb-6 text-[#2D2350]">
+                Login as {userType}
+              </h2>
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Username:</label>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#2D3250]">Password:</label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter password"
+                    />
+                  </div>
+                </div>
+                <hr className="mt-5 border-t border-[#7077A1]" />
+              <div className="flex justify-between">
+                <button
+                  className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
+                  onClick={handleSignUp}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
+                  onClick={handleForgotPassword}
+                >
+                  Forgot Password?
+                </button>
+              </div>
+                <button
+                  type="submit"
+                  className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
+                >
+                  Login
+                </button>
+              </form>
+              
+            </>
+          )}
         </div>
-      </>
-      ) : (
-        // Form Sign Up
-        <>
-          <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Sign Up</h2>
-          <form>
-            <input
-              type="text"
-              placeholder="Username"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <input
-              type="password"
-              placeholder="Verify Password"
-              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
-            />
-            <button
-              type="submit"
-              className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
-            >
-              Sign Up
-            </button>
-          </form>
-          <div className="flex justify-between mt-4 mb-2">
-            <button
-              className="text-[#7077A1] hover:text-[#2D3250] text-sm"
-              onClick={handleGoBackToLogin} // Quay lại form đăng nhập
-            >
-              Back to Login
-            </button>
-          </div>
-        </>
-      )}
+      </div>
+      <LFooter />
+    </>
+  );
+}
 
-      {/* Nút đóng popup */}
-      <button
-        className="mt-1 text-[#7077A1] hover:text-[#2D3250]"
-        onClick={togglePopup} // Đóng popup khi nhấn vào nút này
-      >
-        Close
-      </button>
-    </div>
-  </div>
-);
+export default LoginForm;

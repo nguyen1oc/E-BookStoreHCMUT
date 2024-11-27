@@ -13,6 +13,8 @@ import LoginButton from "./Components/Login/Login";
 import LoginForm from "./Components/Login/LoginForm";
 import PPage from "./Components/Publisher/PPage";
 import UserCart from "./Components/User/UserCart";
+import Signup from "./Components/Login/SignUp";
+import Forget from "./Components/Login/Forget";
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -20,11 +22,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Ensure cart is passed to LHeader */}
+        {/*Page*/}
         <Route path="/" element={<Body />} />
         <Route path="/books" element={<Book />} />
+
+        {/*LoginPart*/}
         <Route path="/select" element={<LoginButton/>} />
         <Route path="/loginform" element={<LoginForm/>} />
+        <Route path="/signup" element={<Signup/>} />
+        <Route path="/forget" element={<Forget/>} />
 
         {/*user*/}
         <Route path="/userdashboard" element={<LPage />} />
