@@ -3,13 +3,14 @@ import { VscAccount } from "react-icons/vsc";
 import { VscBell } from "react-icons/vsc";
 import { BsCart3 } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import Book from "./Book";
-import LoginButton from "../Login/Login";
 
-function Header() {
+function logHeader() {
+
+
   return (
     <>
-      <header id="header" className="bg-[#2D3250]">
+
+<header id="header" className="bg-[#2D3250]">
         <div className="container mx-auto flex justify-between items-center p-6">
           {/* -- Logo -- */}
           <a href="/" className="flex items-center space-x-2">
@@ -22,8 +23,8 @@ function Header() {
             <Link to="/books" className="text-2xl text-white font-bold hover:text-[#F6B17A]">
               Books
             </Link>
-            <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>  
-            <a href="#footer" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
+            {/*<a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>  */}
+            <a href="#lfooter" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
           </nav>
 
           {/* -- Button -- */}
@@ -64,10 +65,9 @@ function Header() {
         </div>
       </header>
 
-      {/* Conditionally render LoginButton if showPopup is true */}
       
     </>
   );
 }
 
-export default Header;
+export default logHeader;

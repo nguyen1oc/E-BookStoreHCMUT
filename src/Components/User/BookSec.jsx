@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import LHeader from "./LHeader";
-import LFooter from "./LFooter";
+import LFooter from "../Login/LFooter";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify"; 
 import "react-toastify/dist/ReactToastify.css"; 

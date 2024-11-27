@@ -73,7 +73,7 @@ function LHeader({ cart = []}) {
           <a href="/loginpage" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
           <Link to="/lbooks" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Books</Link>
           <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>
-          <a href="#footer" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
+          <a href="#lfooter" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
         </nav>
 
         <div className="flex items-center space-x-5">

@@ -1,18 +1,13 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import Header from "./Header";
 import Footer from "./Footer";
 import ReactPaginate from "react-paginate";
-import LoginButton from "./Login"; 
 import NameBook from "../BookTittle";
-
+import LoginButton from "../Login/Login";
 
 const Book = () => {
-  const [showPopup, setShowPopup] = useState(false); // State for managing popup visibility
-
-  const togglePopup = () => {
-    setShowPopup(!showPopup); // Toggle visibility of the login popup
-  };
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -64,11 +59,11 @@ const Book = () => {
         </div>
       </div>
 
-      
       <div>
       <div className="ml-20 mr-20 bg-[#f3f4f6] p-6 flex flex-wrap justify-center">
         {/* Hiển thị các sách thuộc trang hiện tại */}
         {currentBooks.map((book, index) => (
+          <Link to = "/select">
           <div
             key={index}
             className="w-64 m-4 bg-white shadow-xl rounded-lg overflow-hidden hover:ring-2 hover:ring-[#2D3250]"
@@ -90,8 +85,10 @@ const Book = () => {
               </p>
             </div>
           </div>
+          </Link>
         ))}
       </div>
+     
 
   
       </div>
@@ -111,7 +108,6 @@ const Book = () => {
         />
       </div>
 
-      {showPopup && <LoginButton togglePopup={togglePopup} />}
       <Footer />
     </>
   );

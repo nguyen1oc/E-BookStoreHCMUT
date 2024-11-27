@@ -1,176 +1,172 @@
-import React, { useState } from "react";
-import { VscAccount } from "react-icons/vsc";
-import { VscBell } from "react-icons/vsc";
-import { BsCart3 } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+const [isResetPassword, setIsResetPassword] = useState(false);
+const [isSignUp, setIsSignUp] = useState(false);
 
-function LHeader({ cart = [] }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isBellHovered, setIsBellHovered] = useState(false);
-  const [isCartHovered, setIsCartHovered] = useState(false);
-  const [timer, setTimer] = useState(null);
-  const [isLogoutPopupVisible, setIsLogoutPopupVisible] = useState(false);
+const navigate = useNavigate(); 
 
-  const navigate = useNavigate();
+const handleForgotPassword = () => {
+  setIsResetPassword(true);
+};
 
-  const handleCartEnter = () => {
-    if (timer) clearTimeout(timer);
-    setIsCartHovered(true);
-  };
+const handleSignUp = () => {
+  setIsSignUp(true); 
+};
 
-  const handleCartLeave = () => {
-    const newTimer = setTimeout(() => {
-      setIsCartHovered(false);
-    }, 200); // Delay to hide the cart popup
-    setTimer(newTimer);
-  };
+const handleGoBackToLogin = () => {
+  setIsResetPassword(false);
+  setIsSignUp(false); 
+};
 
-  const handleBellEnter = () => {
-    if (timer) clearTimeout(timer);
-    setIsBellHovered(true);
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  navigate("/loginpage");
+};
 
-  const handleBellLeave = () => {
-    const newTimer = setTimeout(() => {
-      setIsBellHovered(false);
-    }, 200); // Delay to hide the notification popup
-    setTimer(newTimer);
-  };
+return (
+  <div
+    id="overlay"
+    className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50"
+    onClick={(e) => {
+      if (e.target.id === "overlay") togglePopup();
+    }}
+  >
+    <div
+      className="bg-white p-8 rounded-lg w-1/3 relative"
+      onClick={(e) => e.stopPropagation()} 
+    >
+      {/* Nút đóng "X" */}
+      <button
+        className="absolute top-1.5 right-2.5 text-[#2D3250] hover:text-black text-xl"
+        onClick={togglePopup}
+      >
+        X
+      </button>
 
-  const handleMouseEnter = () => {
-    if (timer) clearTimeout(timer);
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    const newTimer = setTimeout(() => {
-      setIsHovered(false);
-    }, 300); // Delay to hide account menu
-    setTimer(newTimer);
-  };
-
-  const handleLogoutClick = () => {
-    setIsLogoutPopupVisible(true); // Show the logout confirmation popup
-  };
-
-  const handleLogoutConfirm = () => {
-    setIsLogoutPopupVisible(false); // Close the popup
-    navigate("/"); // Redirect to homepage
-  };
-
-  const handleLogoutCancel = () => {
-    setIsLogoutPopupVisible(false); // Close the popup
-  };
-
-  return (
-    <header id="lheader" className="bg-[#2D3250]">
-      <div className="container mx-auto flex justify-between items-center p-6">
-        <a href="/loginpage" className="flex items-center space-x-2">
-          <span className="text-3xl font-bold text-white ml-0">HCMUT E-Bookstore</span>
-        </a>
-
-        <nav className="hidden xl:flex space-x-20">
-          <a href="/loginpage" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
-          <Link to="/lbooks" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Books</Link>
-          <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>
-          <a href="#footer" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
-        </nav>
-
-        <div className="flex items-center space-x-5">
-          <nav className="relative flex space-x-10" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
-            <BsCart3 size={45} className="text-white hover:text-[#F6B17A]" />
-            {cart.length > 0 && (
-              <div className="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-2 py-1">
-                {cart.length}
-              </div>
-            )}
-
-            {isCartHovered && cart.length > 0 && (
-              <div className="absolute top-12 right-0 w-64 bg-white shadow-lg rounded-lg p-3 z-50">
-                <h3 className="text-xl font-semibold mb-3">Your Cart</h3>
-                <ul>
-                  {cart.map((book, index) => (
-                    <li key={index} className="flex justify-between py-1">
-                      <span className="text-sm">{book.title}</span>
-                      <span className="text-sm">{book.quantity} x ${book.price}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-3 text-center">
-                  <Link to="/booksec" className="text-sm text-[#F6B17A]">Go to Cart</Link>
-                </div>
-              </div>
-            )}
-          </nav>
-
-          <button className="md:hidden text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-10 h-10">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
-          <div className="relative flex items-center space-x-5">
-            <nav className="hidden md:flex space-x-10" onMouseEnter={handleBellEnter} onMouseLeave={handleBellLeave}>
-              <VscBell size={45} className="text-white hover:text-[#F6B17A]" />
-              {isBellHovered && (
-                <div className="absolute right-10 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
-                  <ul className="py-2 text-[#7077A1]">
-                    <li className="px-4 py-2 text-center">Don't have any notifications</li>
-                  </ul>
-                </div>
-              )}
-            </nav>
-
-            <div
-              className="relative"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+      {!isResetPassword && !isSignUp ? (
+        // Form Login
+        <>
+          <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Log In</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Username"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <div className="flex justify-between mb-4">
+              <a
+                href="#"
+                className="text-[#7077A1] hover:text-black text-sm"
+                onClick={handleForgotPassword} 
+              >
+                Forgot your password?
+              </a>
+              <a
+                href="#"
+                className="text-[#7077A1] hover:text-black text-sm"
+                onClick={handleSignUp} 
+              >
+                Sign Up
+              </a>
+            </div>
+            <hr style={{ border: "1px solid #2D3250", margin: "20px 0" }} />
+            <button
+              type="submit"
+              className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
             >
-              <VscAccount size={45} className="text-white hover:text-[#F6B17A] cursor-pointer" />
-              {isHovered && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
-                  <ul className="py-2 text-[#7077A1]">
-                    <li className="px-4 py-2 hover:bg-gray-200 hover:text-[#F6B17A] cursor-pointer">
-                      <Link to="/profile">Your Account</Link>
-                    </li>
-                    <li
-                      className="px-4 py-2 hover:bg-gray-200 hover:text-[#F6B17A] cursor-pointer"
-                      onClick={handleLogoutClick} // Show logout confirmation popup
-                    >
-                      Logout
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
+              Submit
+            </button>
+          </form>
+        </>
+      ) : isResetPassword ? (
+        // Form Reset Password
+        <>
+        <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Reset Password</h2>
+        <form>
+          <input
+            type="email"
+            placeholder="Email"
+            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+          />
+          <input
+            type="password"
+            placeholder="Old Password"
+            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+          />
+          <button
+            type="submit"
+            className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
+          >
+            Reset Password
+          </button>
+        </form>
+        <div className="flex justify-between mt-4 mb-2">
+          <button
+            className="text-[#7077A1] hover:text-[#2D3250] text-sm"
+            onClick={handleGoBackToLogin} // Quay lại form đăng nhập
+          >
+            Back to Login
+          </button>
         </div>
-      </div>
-
-      {/* Logout Confirmation Popup */}
-      {isLogoutPopupVisible && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-1/3 text-center">
-            <p className="text-xl mb-4">Are you sure you want to logout?</p>
-            <div className="space-x-4">
-              <button
-                onClick={handleLogoutConfirm}
-                className="bg-[#F6B17A] text-white py-2 px-4 rounded-lg hover:bg-[#e0925b]"
-              >
-                Yes
-              </button>
-              <button
-                onClick={handleLogoutCancel}
-                className="bg-[#7077A1] text-white py-2 px-4 rounded-lg hover:bg-[#4e5d7b]"
-              >
-                No
-              </button>
-            </div>
+      </>
+      ) : (
+        // Form Sign Up
+        <>
+          <h2 className="text-2xl font-bold mb-4 text-[#2D3250]">Sign Up</h2>
+          <form>
+            <input
+              type="text"
+              placeholder="Username"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <input
+              type="password"
+              placeholder="Verify Password"
+              className="border border-[#2D3250] text-[#2D3250] focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg w-full p-2 mb-4"
+            />
+            <button
+              type="submit"
+              className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"
+            >
+              Sign Up
+            </button>
+          </form>
+          <div className="flex justify-between mt-4 mb-2">
+            <button
+              className="text-[#7077A1] hover:text-[#2D3250] text-sm"
+              onClick={handleGoBackToLogin} // Quay lại form đăng nhập
+            >
+              Back to Login
+            </button>
           </div>
-        </div>
+        </>
       )}
-    </header>
-  );
-}
 
-export default LHeader;
+      {/* Nút đóng popup */}
+      <button
+        className="mt-1 text-[#7077A1] hover:text-[#2D3250]"
+        onClick={togglePopup} // Đóng popup khi nhấn vào nút này
+      >
+        Close
+      </button>
+    </div>
+  </div>
+);

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LHeader from "./LHeader";
 //import Footer from "../Log/Footer";
 import Footer from "../Log/Footer";
+import LoginForm from "../Login/LoginForm";
 
 function LBody() {
   // State to track whether the "Learn More" section is expanded
@@ -15,7 +16,6 @@ function LBody() {
   return (
     <>
       <LHeader/>
-      {/* Welcome Section */}
       <div
         id="home"
         className="relative flex justify-center items-center mt-12 mb-12"
@@ -26,7 +26,6 @@ function LBody() {
           alt="Image"
           className="w-full h-[500px] object-cover opacity-50"
         />
-        {/* Welcome Message */}
         <h2 className="absolute ml-10 lg:justify-center text-[#070F2B] text-bold text-5xl">
           ENJOY YOUR TIME IN OUR PLACE!!
         </h2>
