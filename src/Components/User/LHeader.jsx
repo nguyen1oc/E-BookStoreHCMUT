@@ -65,12 +65,12 @@ function LHeader({ cart = []}) {
   return (
     <header id="lheader" className="bg-[#2D3250]">
       <div className="container mx-auto flex justify-between items-center p-6">
-        <a href="/loginpage" className="flex items-center space-x-2">
+        <a href="/userdashboard" className="flex items-center space-x-2">
           <span className="text-3xl font-bold text-white ml-0">HCMUT E-Bookstore</span>
         </a>
 
         <nav className="hidden xl:flex space-x-20">
-          <a href="/loginpage" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
+          <a href="/userdashboard" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
           <Link to="/lbooks" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Books</Link>
           <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>
           <a href="#lfooter" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
@@ -103,7 +103,7 @@ function LHeader({ cart = []}) {
                   ))}
                 </ul>
                 <div className="mt-3 text-center">
-                  <Link to="/booksec" className="text-sm text-[#F6B17A]">Go to Cart</Link>
+                  <Link to="/cart" className="text-sm text-[#F6B17A]">Go to Cart</Link>
                 </div>
               </div>
             )}

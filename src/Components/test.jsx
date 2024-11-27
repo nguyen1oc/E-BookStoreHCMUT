@@ -72,7 +72,7 @@ return (
                 Sign Up
               </a>
             </div>
-            <hr style={{ border: "1px solid #2D3250", margin: "20px 0" }} />
+            
             <button
               type="submit"
               className="border-2 border-[#7077A1] rounded-lg px-5 py-1 text-xl text-[#2D3250] font-bold bg-transparent hover:bg-[#7077A1]"

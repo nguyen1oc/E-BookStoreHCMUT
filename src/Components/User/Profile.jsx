@@ -109,7 +109,6 @@ const Profile = () => {
                   />
                   <h3 className="text-lg font-bold mt-2">{book.title}</h3>
                   <p className="text-sm text-gray-600">Author: {book.author}</p>
-                  <p className="text-lg text-[#2D3250] font-bold mt-2">Price: {book.price} VND</p>
                 </div>
               ))}
             </div>

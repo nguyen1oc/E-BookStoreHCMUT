@@ -60,7 +60,7 @@ const BookSec = () => {
       </div>
       <div>
   <h2 className="flex text-3xl font-bold text-right mt-10 ml-20"> Review:</h2>
-  <div className="container bg-gray-200 p-8 rounded-lg w-3/4 ml-20 mr-10">
+  <div className="container bg-gray-200 p-8 rounded-lg w-3/4 ml-20 mr-10 mb-10">
     {/* Các đánh giá sách */}
     {book.review && book.review.map((review, index) => (
         <div key={index} className="text-lg text-xl text-gray-700 mt-2">

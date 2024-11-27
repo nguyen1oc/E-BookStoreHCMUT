@@ -12,6 +12,7 @@ import BookSec from "./Components/User/BookSec";
 import LoginButton from "./Components/Login/Login";
 import LoginForm from "./Components/Login/LoginForm";
 import PPage from "./Components/Publisher/PPage";
+import UserCart from "./Components/User/UserCart";
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -30,7 +31,7 @@ function App() {
         <Route path="/lbooks" element={<LBook />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booksec" element={<BookSec/>} />
-
+        <Route path="/cart" element={<UserCart/>} />
         {/*publiser*/}
         <Route path="/publisherdashboard" element={<PPage />} />
         {/*author*/}
