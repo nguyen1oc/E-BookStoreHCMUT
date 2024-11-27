@@ -11,7 +11,7 @@ import Profile from "./Components/User/Profile";
 import BookSec from "./Components/User/BookSec";
 import LoginButton from "./Components/Login/Login";
 import LoginForm from "./Components/Login/LoginForm";
-import PPage from "./Components/Publisher/PPage";
+import PPage from "./Components/Author/PPage";
 import UserCart from "./Components/User/UserCart";
 import Signup from "./Components/Login/SignUp";
 import Forget from "./Components/Login/Forget";
