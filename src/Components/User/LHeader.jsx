@@ -33,7 +33,7 @@ function LHeader({ cart = []}) {
   const BellLeave =()=>{
     const newTimer = setTimeout(() => {
       setIsBellHovered(false);
-    }, 200); // 300ms delay (adjust as needed)
+    }, 300); 
     setTimer(newTimer);
   }
 
@@ -45,7 +45,7 @@ function LHeader({ cart = []}) {
   const handleMouseLeave = () => {
     const newTimer = setTimeout(() => {
       setIsHovered(false);
-    }, 300); // 300ms delay (adjust as needed)
+    }, 300); 
     setTimer(newTimer);
   };
 
@@ -77,23 +77,17 @@ function LHeader({ cart = []}) {
         </nav>
 
         <div className="flex items-center space-x-5">
-          <nav className="hidden sm:flex space-x-10"
+          <div className="relative"
           onMouseEnter={CartEnter}
           onMouseLeave={CartLeave}
           >
             <div className="relative">
               <BsCart3 size={45} className="text-white hover:text-[#F6B17A]" />
-                {/* Cart Item Count */}
-              {cart.length >= 0 && (
-              <div className="absolute top-0 right-0 text-xs text-white bg-red-400 rounded-full px-2 py-1">
-                {cart.length}
-              </div>
-              )}
             </div>
            {/* Display the cart items when hovered */}
            {isCartHovered && cart.length >= 0 && (
-              <div className="absolute top-12 right-0 w-64 bg-white shadow-lg rounded-lg p-3 z-50">
-                <h3 className="text-xl font-semibold mb-3">Your Cart</h3>
+              <div className="absolute right-2 top-full mt-2 ml-5 w-48 bg-white shadow-lg rounded-md z-10">
+                <h3 className="text-xl font-semibold justify-center flex">Your Cart</h3>
                 <ul>
                   {cart.map((book, index) => (
                     <li key={index} className="flex justify-between py-1">
@@ -107,7 +101,7 @@ function LHeader({ cart = []}) {
                 </div>
               </div>
             )}
-          </nav>
+          </div>
           <button className="md:hidden text-white">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-10 h-10">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -115,21 +109,21 @@ function LHeader({ cart = []}) {
           </button>
 
           <div className="flex items-center space-x-5">
-            <nav className="hidden md:flex space-x-10"
+            <div className="relative"
                onMouseEnter={BellEnter}
                onMouseLeave={BellLeave}
             >
               <VscBell size={45} className="text-white hover:text-[#F6B17A]" />
               {isBellHovered && (
-              <div className="absolute right-10 mt-2 w-48 bg-white shadow-lg rounded-md z-5">
-                <ul className="py-2 text-[#7077A1]">
-                  <li className="px-4 py-2 text-center">
-                    Don't have any notifications
-                  </li>
-                </ul>
-              </div>
-            )}
-            </nav>
+                <div className="absolute right-2 top-full mt-2 ml-5 w-48 bg-white shadow-lg rounded-md z-10">
+                  <ul className="py-2 text-[#7077A1]">
+                    <li className="px-4 py-2 text-center">
+                      Don't have any notifications
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div
               className="relative"

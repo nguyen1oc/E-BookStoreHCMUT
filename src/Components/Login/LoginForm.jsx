@@ -45,6 +45,7 @@ function LoginForm() {
                       onChange={(e) => setUsername(e.target.value)}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter username"
+                      required
                     />
                   </div>
                   <div>
@@ -55,6 +56,7 @@ function LoginForm() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter password"
+                      required
                     />
                   </div>
                 </div>
