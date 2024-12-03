@@ -27,6 +27,7 @@ function LoginForm() {
 
       if (response.ok) {
           const data = await response.json();
+          localStorage.setItem("user_id", data.user_id);
           console.log("Login successful:", data);
           if (userType === "User") {
               navigate("/userdashboard");
