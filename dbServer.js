@@ -88,6 +88,7 @@ app.post("/login", async (req, res) => {
     try {
         const sql_username_search = "SELECT * FROM users WHERE user_name = $1";
         const query_username_search = await client.query(sql_username_search, [username]);
+        const user = query_username_search.rows[0];
         if(query_username_search.rows.length == 0) {
             return res.status(404).json({error: "User not found"});
         }
@@ -95,13 +96,30 @@ app.post("/login", async (req, res) => {
         if(!comparepassword) {
             return res.status(401).json({error: "Invalid password"});
         }
-        res.status(200).json({message: "Login successful"});
+        res.status(200).json({message: "Login successful", user_id: user.users_id,});
     } catch (err) {
         console.error("Error during login:", err);
         res.status(500).json({error: "Internal server error"});
     }
 });
 
+app.post("/cart", async (req, res) => {
+    const {actual_price, user_id} = req.body;
+    try {
+        const find_customer_query = "SELECT * FROM customer WHERE customer_id = $1";
+        const find_customer_result = await client.query(find_customer_query, [user_id]);
+        if(find_customer_result.rows[0] == 0) {
+            const user_price_query = "INSERT INTO customer (customer_id, money_spent) VALUES ($1, $2)";
+            await client.query(user_price_query, [user_id, actual_price]);
+        }
+        const update_total_spend_query = "UPDATE customer SET money_spent = money_spent + $1 WHERE customer_id = $2";
+        const update_total_spend_result = await client.query(update_total_spend_query, [actual_price, user_id]);
+        res.status(200).json({message: "Purchase successfull"});
+    } catch(err) {
+        console.error("Error during cart action:", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+})
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
