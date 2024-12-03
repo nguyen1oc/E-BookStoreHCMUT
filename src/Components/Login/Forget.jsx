@@ -3,18 +3,22 @@ import React, { useState } from "react";
 import LogHeader from "./LoginHeader";
 import LFooter from "./LFooter";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 function Forget(){
   const [email, setEmail] = useState("");
   const [oldPassword, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
+
+  const location = useLocation();
+  const { userType } = location.state || {}; 
     return(
       <>
         <LogHeader />
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">
         <>
-             <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Reset Password</h2>
+             <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Reset Password as {userType}</h2>
                <div className="space-y-4">
                  <div>
                    <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
@@ -61,13 +65,15 @@ function Forget(){
                  type="submit"
                  className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
                >
+                <Link to = "/select">
                  Reset Password
+                 </Link>
                </button>
              <div className="flex justify-between mt-4 mb-2">
                <button
                  className="text-[#7077A1] hover:text-[#2D3250] text-sm"
                >
-                 <Link to ="/select">
+                 <Link to ="/loginform" state={{ userType }}>
                  Back to Login
                  </Link> 
                </button>
