@@ -13,17 +13,36 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username && password) {
-      if (userType === "User") {
-        navigate("/userdashboard");
-      } else if (userType === "Publisher") {
-        navigate("/publisherdashboard");
-      } else if (userType === "Author") {
-        navigate("/authordashboard");
+
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          console.log("Login successful:", data);
+          if (userType === "User") {
+              navigate("/userdashboard");
+          } else if (userType === "Publisher") {
+              navigate("/publisherdashboard");
+          } else if (userType === "Author") {
+              navigate("/authordashboard");
+          }
+      } else {
+          const errorText = await response.text();
+          console.error("Login failed:", errorText);
+          alert("Login failed: " + errorText);
       }
-    }
+  } catch (error) {
+      console.error("Error during login:", error);
+  }
   };
 
 
@@ -37,13 +56,14 @@ function LoginForm() {
               <h2 className="text-2xl font-bold text-center mb-6 text-[#2D2350]">
                 Login
               </h2>
-              <form onSubmit={handleSubmit}>
+              <form action = "/login" method = "POST" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[#2D3250]">Username:</label>
                     <input
                       type="text"
                       value={username}
+                      name = "username"
                       onChange={(e) => setUsername(e.target.value)}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter username"
@@ -55,6 +75,7 @@ function LoginForm() {
                     <input
                       type="password"
                       value={password}
+                      name = "password"
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter password"
@@ -67,7 +88,7 @@ function LoginForm() {
                 <button
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                 >
-                  <Link to = "/signup" state={{ userType }}>
+                  <Link to = "/signup">
                   Sign Up
                   </Link>
                 </button>
@@ -75,7 +96,7 @@ function LoginForm() {
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                   
                 >
-                 <Link to ="/forget" state={{ userType }}>
+                  <Link to ="/forget">
                   Forgot Password?
                   </Link>
                 </button>
