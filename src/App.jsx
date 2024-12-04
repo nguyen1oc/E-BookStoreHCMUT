@@ -20,6 +20,8 @@ import ABookSec from "./Components/Author/ABookSec";
 import AProfile from "./Components/Author/AProfile";
 import AuthorCart from "./Components/Author/AuthorCart";
 import PBody from "./Components/Publisher/PubPage";
+import { CartProvider } from "./Components/User/CartContext";
+import LFooter from "./Components/Login/LFooter";
 
 
 // Cac phan import co may cai bi du nhung ma t luoi qa nen k xoa
@@ -28,6 +30,7 @@ function App() {
 
   return (
     <Router>
+      <CartProvider>
       <Routes>
         {/*Page*/}
         <Route path="/" element={<Body />} />
@@ -46,6 +49,7 @@ function App() {
         <Route path="/booksec" element={<BookSec/>} />
         <Route path="/cart" element={<UserCart/>} />
         <Route path="/profile/*" element={<Profile />} />
+        
 
         {/*author*/}
         <Route path="/authordashboard" element={<PPage />} />
@@ -59,6 +63,7 @@ function App() {
         <Route path="/publisherdashboard" element={<PBody />} />
 
       </Routes>
+      </CartProvider>
     </Router>
   );
 }
