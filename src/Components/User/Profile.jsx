@@ -11,6 +11,19 @@ const Profile = () => {
   const [selectedOption, setSelectedOption] = useState("My Account"); // Default option
   const [currentPage, setCurrentPage] = useState(0);
   const booksPerPage = 4;
+  const handleSubmitReport = () => {
+    if (reportContent.trim() !== "") {
+      const newReport = {
+        id: reports.length + 1,
+        content: reportContent,
+        date: new Date().toLocaleString()
+      };
+      setReports([...reports, newReport]);
+      setReportContent(""); // Reset the input field
+    } else {
+      alert("Please write a report before submitting.");
+    }
+  };
   return (
     <>
 
@@ -37,6 +50,9 @@ const Profile = () => {
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
               <Link to="/profile/password">Change Password</Link>
             </li>
+            <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
+              <Link to="/profile/report">Report</Link>
+            </li>
           </ul>
         </div>
 
@@ -48,11 +64,91 @@ const Profile = () => {
             <Route path="notification" element={<Notification />} />
             <Route path="books" element={<Books />} />
             <Route path="password" element={<Password />} />
+            <Route path="report" element={<Report/>} />
             <Route path="*" element={<p>Please select an option from the left.</p>} />
           </Routes>
         </div>
       </div>
       <Footer />
+    </>
+  );
+};
+
+const Report = () => {
+  const [reportContent, setReportContent] = useState(""); 
+  const [reports, setReports] = useState([]); 
+
+  const handleSubmitReport = () => {
+    if (reportContent.trim() !== "") {
+      const newReport = {
+        id: reports.length + 1,
+        content: reportContent,
+        date: new Date().toLocaleString()
+      };
+      setReports([...reports, newReport]);
+      setReportContent("");
+    } else {
+      alert("Please write a report before submitting.");
+    }
+  };
+
+  return (
+    <>
+      <div className="text-[#424769]">
+        <h2 className="text-2xl font-bold">Submit a Report</h2>
+        <hr className="border-t-2 border-grey-500 w-full mt-1 mb-1" />
+        <p classname="text-[#424769] font-bold"> This part where you can send anything you want to the administrators</p>
+        
+        <div>
+          <textarea
+            value={reportContent}
+            onChange={(e) => setReportContent(e.target.value)}
+            placeholder="Write your report here..."
+            className="w-full p-4 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] mt-5 hover:ring-2 hover:ring-[#424769]"
+          />
+          <div className="flex justify-end">
+            <button
+              className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
+              onClick={handleSubmitReport}
+            >
+              Submit Report
+            </button>
+          </div>
+        </div>
+
+        {/* Display submitted reports */}
+        <div className="mt-6">
+          <h3 className="text-xl font-bold">Your Submitted Reports</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto">
+              <thead>
+                <tr className="bg-[#F6F6F6]">
+                  <th className="px-4 py-2 text-left">Report ID</th>
+                  <th className="px-4 py-2 text-left">Date Submitted</th>
+                  <th className="px-4 py-2 text-left">Content</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.length > 0 ? (
+                  reports.map((report) => (
+                    <tr key={report.id}>
+                      <td className="px-4 py-2">#{report.id}</td>
+                      <td className="px-4 py-2">{report.date}</td>
+                      <td className="px-4 py-2">{report.content}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-4 py-2 text-center text-gray-500">
+                      No reports submitted yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
