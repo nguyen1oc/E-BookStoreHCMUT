@@ -1,0 +1,10 @@
+DROP TABLE Review;
+DROP TABLE writes;
+DROP TABLE order_item;
+DROP TABLE orders;
+DROP TABLE book;
+DROP TABLE report;
+DROP TABLE publisher;
+DROP TABLE author;
+DROP TABLE customer;
+DROP TABLE users;
