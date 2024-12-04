@@ -4,19 +4,23 @@ import LFooter from "../Login/LFooter";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "./CartContext";
 
 const BookSec = () => {
   const location = useLocation();
   const { book } = location.state || {};  
-
-  const [cart, setCart] = useState([]);
+  const { addCart } = useCart(); 
+  const { addToCart } = useCart();
+  //const [cart, setCart] = useState([]);
   const [reviewContent, setReviewContent] = useState("");
   const [stars, setStars] = useState(1);
   const [userReview, setUserReview] = useState(book?.review || []);
 
   // Them sach vao gio hang chu yeu thong bao cho dep
   const handleAddToCart = () => {
-    setCart([...cart, book]);
+    //setCart([...cart, book]);
+    if (!book) return;
+    addToCart(book);
     toast.success(`${book.title} has been added to your cart!`, {
       position: "bottom-right", 
       autoClose: 4000, 

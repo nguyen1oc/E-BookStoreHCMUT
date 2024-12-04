@@ -1,30 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import LFooter from "../Login/LFooter";
 import LHeader from "./LHeader";
-import NameBook from "../BookTittle";
 import { Link } from "react-router-dom";
+import { useCart } from "./CartContext";
 
 function UserCart() {
-  const [cartItems, setCartItems] = useState(NameBook); 
+  const { cart, removeItem } = useCart();
 
   const calculateTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + item.price, 0);
   };
 
   const calculateTotalItems = () => {
-    return cartItems.length;
+    return cart.length;
   };
 
-  // Cho nay t dang tinh discount tuong trung Th >5 thi giam
   const calculateDiscount = () => {
     const totalItems = calculateTotalItems();
     const totalPrice = calculateTotalPrice();
-    return totalItems > 5 ? totalPrice * 0.1 : 0; 
+    return totalItems > 5 ? totalPrice * 0.1 : 0;
   };
 
-  // Tính tổng giá trị sau khi áp dụng giảm giá
   const calculateFinalTotal = () => {
     return calculateTotalPrice() - calculateDiscount();
+  };
+
+  const handleRemoveItem = (itemOrder) => {
+    removeItem(itemOrder); // Xóa sản phẩm theo order
   };
 
   return (
@@ -35,20 +37,30 @@ function UserCart() {
           <h2 className="text-2xl font-bold mb-6 text-[#2D3250]">Cart</h2>
 
           {/* Hiển thị các sản phẩm trong giỏ */}
-          {cartItems.map((item, index) => (
-            <div key={index} className="flex items-center justify-between mb-4 p-4 border-b border-gray-300">
-              <div className="flex items-center">
-                <img src={item.image} alt={item.title} className="w-16 h-20 object-cover mr-4" />
-                <div>
-                  <h3 className="text-lg font-semibold text-[#2D3250]">{item.title}</h3>
-                  <p className="text-sm text-gray-500">{item.author}</p>
+          {cart.length > 0 ? (
+            cart.map((item, index) => (
+              <div key={index} className="flex items-center justify-between mb-4 p-4 border-b border-gray-300">
+                <div className="flex items-center">
+                  <img src={item.image} alt={item.title} className="w-16 h-20 object-cover mr-4" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#2D3250]">{item.title}</h3>
+                    <p className="text-sm text-gray-500">{item.author}</p>
+                  </div>
+                </div>
+                <div className="text-right mt-3">
+                  <p className="text-lg font-semibold text-[#2D3250]">{item.price.toLocaleString()} VND</p>
+                  <button
+                    className="text-red-500 text-sm hover:text-red-700"
+                    onClick={() => handleRemoveItem(item.order)} 
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-semibold text-[#2D3250]">{item.price.toLocaleString()} VND</p>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-center text-xl text-gray-700 mt-20">Your cart is empty.</p>
+          )}
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
             <span>Total Items:</span>
