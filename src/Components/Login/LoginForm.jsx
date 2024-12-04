@@ -55,7 +55,7 @@ function LoginForm() {
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">
             <>
               <h2 className="text-2xl font-bold text-center mb-6 text-[#2D2350]">
-                Login
+                Login as {userType}
               </h2>
               <form action = "/login" method = "POST" onSubmit={handleSubmit}>
                 <div className="space-y-4">
@@ -89,7 +89,7 @@ function LoginForm() {
                 <button
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                 >
-                  <Link to = "/signup">
+                  <Link to = "/signup" state = {{userType}}>
                   Sign Up
                   </Link>
                 </button>
@@ -97,7 +97,7 @@ function LoginForm() {
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                   
                 >
-                  <Link to ="/forget">
+                  <Link to ="/forget" state = {{userType}}>
                   Forgot Password?
                   </Link>
                 </button>
