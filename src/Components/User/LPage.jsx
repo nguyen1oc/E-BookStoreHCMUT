@@ -27,7 +27,7 @@ function LBody() {
               className="scale-100 ml-"
             />
           </div>
-</div>
+        </div>
 
 
       <Footer/>
