@@ -73,7 +73,7 @@ function LHeader({ cart = []}) {
           <a href="/userdashboard" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
           <Link to="/lbooks" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Books</Link>
           <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>
-          <a href="#lfooter" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
+          <a href="#footer" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
         </nav>
 
         <div className="flex items-center space-x-5">
@@ -135,7 +135,7 @@ function LHeader({ cart = []}) {
                 <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
                   <ul className="py-2 text-[#7077A1]">
                     <li className="px-4 py-2 hover:bg-gray-200 hover:text-[#F6B17A] cursor-pointer">
-                      <Link to="/profile">
+                      <Link to="/profile/information">
                         Your Account
                       </Link>
                     </li>

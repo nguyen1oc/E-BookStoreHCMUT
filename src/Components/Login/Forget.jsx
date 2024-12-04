@@ -6,12 +6,38 @@ import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 function Forget(){
   const [email, setEmail] = useState("");
-  const [oldPassword, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
-
+  const [passwordError, setPasswordError] = useState(""); 
+  const [emailError, setEmailError] = useState(""); 
   const location = useLocation();
   const { userType } = location.state || {}; 
+
+  const validatePasswordMatch = (password, verifyPassword) => {
+    if (password ==="" || verifyPassword === "") setPasswordError("")
+    else{
+      if (password !== verifyPassword) {
+        setPasswordError("Passwords do not match.");
+      } else {
+        setPasswordError("");
+      }
+    }
+  };
+
+  const validateEmail = (email) => {
+    if (email === "") {
+      setEmailError("");
+    } else {
+      const emailRegex = /@/;
+      if (!emailRegex.test(email)) {
+        setEmailError("Invalid email format. Please include '@'.");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
+  
     return(
       <>
         <LogHeader />
@@ -21,14 +47,20 @@ function Forget(){
              <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Reset Password as {userType}</h2>
                <div className="space-y-4">
                  <div>
-                   <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
-                   <input
-                     type="email"
-                     value={email}
-                     onChange={(e) => setEmail(e.target.value)}
-                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
-                     placeholder="Enter email"
-                   />
+                 <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        validateEmail(e.target.value);
+                      }}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter email"
+                    />
+                     {emailError && (
+                        <p className="text-red-500 text-sm mt-2">{emailError}</p>
+                      )}
                  </div>
                  <div>
                    <label className="block text-sm font-medium text-[#2D3250]">Old Password:</label>
@@ -41,24 +73,35 @@ function Forget(){
                    />
                  </div>
                  <div>
-                   <label className="block text-sm font-medium text-[#2D3250]">New Password:</label>
-                   <input
-                     type="password"
-                     value={newPassword}
-                     onChange={(e) => setNewPassword(e.target.value)}
-                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
-                     placeholder="Enter new password"
-                   />
+                  <label className="block text-sm font-medium text-[#2D3250]">New Password:</label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => {
+                          setNewPassword(e.target.value);
+                          validatePasswordMatch(e.target.value, verifyPassword);
+                        }}
+                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                        placeholder="Enter password"
+                      />
                  </div>
                  <div>
-                   <label className="block text-sm font-medium text-[#2D3250]">Verify New Password:</label>
-                   <input
-                     type="password"
-                     value={verifyPassword}
-                     onChange={(e) => setVerifyPassword(e.target.value)}
-                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
-                     placeholder="Verify new password"
-                   />
+                 <label className="block text-sm font-medium text-[#2D3250]">
+                      Verify Password:
+                    </label>
+                    <input
+                      type="password"
+                      value={verifyPassword}
+                      onChange={(e) => {
+                        setVerifyPassword(e.target.value);
+                        validatePasswordMatch(newPassword, e.target.value); // Gọi hàm kiểm tra
+                      }}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Verify password"
+                    />
+                    {passwordError && (
+                      <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+                    )}
                  </div>
                </div>
                <button

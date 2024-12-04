@@ -5,13 +5,53 @@ import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 function Signup({ handleGoBackToLogin }) {
   const [email, setEmail] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState(""); 
+  const [emailError, setEmailError] = useState(""); 
 
   const navigate = useNavigate();
   const location = useLocation();
   const { userType } = location.state || {}; 
+
+  const validatePhoneNumber = (number) => {
+    if (number === "") setPhoneError("");
+    else{
+      const phoneRegex = /^[0-9]{9,11}$/; 
+    if (!phoneRegex.test(number)) {
+      setPhoneError("Invalid phone number. Please enter 9-11 digits.");
+    } else {
+      setPhoneError(""); 
+    }
+    }
+  };
+  const validatePasswordMatch = (password, verifyPassword) => {
+    if (password ==="" || verifyPassword === "") setPasswordError("")
+    else{
+      if (password !== verifyPassword) {
+        setPasswordError("Passwords do not match.");
+      } else {
+        setPasswordError("");
+      }
+    }
+  };
+
+  const validateEmail = (email) => {
+    if (email == "") {
+      setEmailError("");
+    } else {
+      const emailRegex = /@/;
+      if (!emailRegex.test(email)) {
+        setEmailError("Invalid email format. Please include '@'.");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
+  
 
   return (
     <>
@@ -33,34 +73,67 @@ function Signup({ handleGoBackToLogin }) {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-[#2D3250]"> Phone number: </label>
+                    <input
+                      type="text"
+                      value={phonenumber}
+                      onChange={(e) => {
+                      setPhonenumber(e.target.value);
+                      validatePhoneNumber(e.target.value); 
+                      }}
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+                      placeholder="Enter phone number"
+                />
+                  {phoneError && (
+                    <p className="text-red-500 text-sm mt-2">{phoneError}</p>
+                  )}
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-[#2D3250]">Email:</label>
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        validateEmail(e.target.value);
+                      }}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter email"
                     />
+                     {emailError && (
+                        <p className="text-red-500 text-sm mt-2">{emailError}</p>
+                      )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#2D3250]">Password:</label>
                     <input
                       type="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        validatePasswordMatch(e.target.value, verifyPassword);
+                      }}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter password"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#2D3250]">Verify Password:</label>
+                    <label className="block text-sm font-medium text-[#2D3250]">
+                      Verify Password:
+                    </label>
                     <input
                       type="password"
                       value={verifyPassword}
-                      onChange={(e) => setVerifyPassword(e.target.value)}
+                      onChange={(e) => {
+                        setVerifyPassword(e.target.value);
+                        validatePasswordMatch(password, e.target.value);
+                      }}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Verify password"
                     />
+                    {passwordError && (
+                      <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+                    )}
                   </div>
                 </div>
                 <button
