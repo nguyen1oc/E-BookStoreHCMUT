@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, Routes, Route, useNavigate } from "react-router-dom";
 import LHeader from "./LHeader";
-import Footer from "../Log/Footer";
 import ReactPaginate from "react-paginate";
 import { useState } from "react";
 import NameBook from "../BookTittle";
+import LFooter from "../Login/LFooter";
 
 const Profile = () => {
   const navigate = useNavigate(); // Dùng để chuyển hướng
@@ -69,7 +69,7 @@ const Profile = () => {
           </Routes>
         </div>
       </div>
-      <Footer />
+      <LFooter />
     </>
   );
 };
@@ -97,7 +97,7 @@ const Report = () => {
       <div className="text-[#424769]">
         <h2 className="text-2xl font-bold">Submit a Report</h2>
         <hr className="border-t-2 border-grey-500 w-full mt-1 mb-1" />
-        <p classname="text-[#424769] font-bold"> This part where you can send anything you want to the administrators</p>
+        <p className="text-[#424769]"> This part where you can send anything you want to the administrators</p>
         
         <div>
           <textarea

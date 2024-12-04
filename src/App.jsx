@@ -21,6 +21,7 @@ import AProfile from "./Components/Author/AProfile";
 import AuthorCart from "./Components/Author/AuthorCart";
 import PBody from "./Components/Publisher/PubPage";
 import { CartProvider } from "./Components/User/CartContext";
+import LFooter from "./Components/Login/LFooter";
 
 
 // Cac phan import co may cai bi du nhung ma t luoi qa nen k xoa
