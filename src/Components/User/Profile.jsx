@@ -74,82 +74,93 @@ const Profile = () => {
   );
 };
 
+
 const Report = () => {
+  const [reportTitle, setReportTitle] = useState(""); 
   const [reportContent, setReportContent] = useState(""); 
   const [reports, setReports] = useState([]); 
 
   const handleSubmitReport = () => {
-    if (reportContent.trim() !== "") {
+    if (reportTitle.trim() !== "" && reportContent.trim() !== "") {
       const newReport = {
         id: reports.length + 1,
+        title: reportTitle,
         content: reportContent,
-        date: new Date().toLocaleString()
+        date: new Date().toLocaleDateString(),
       };
       setReports([...reports, newReport]);
+      setReportTitle("");
       setReportContent("");
     } else {
-      alert("Please write a report before submitting.");
+      alert("Please fill in both the title and content before submitting.");
     }
   };
 
   return (
-    <>
-      <div className="text-[#424769]">
-        <h2 className="text-2xl font-bold">Submit a Report</h2>
-        <hr className="border-t-2 border-grey-500 w-full mt-1 mb-1" />
-        <p className="text-[#424769]"> This part where you can send anything you want to the administrators</p>
-        
-        <div>
-          <textarea
-            value={reportContent}
-            onChange={(e) => setReportContent(e.target.value)}
-            placeholder="Write your report here..."
-            className="w-full p-4 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] mt-5 hover:ring-2 hover:ring-[#424769]"
-          />
-          <div className="flex justify-end">
-            <button
-              className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
-              onClick={handleSubmitReport}
-            >
-              Submit Report
-            </button>
-          </div>
-        </div>
+    <div className="text-[#424769]">
+      <h2 className="text-2xl font-bold">Submit a Report</h2>
+      <hr className="border-t-2 border-grey-500 w-full mt-1 mb-2" />
+      <p>This is the part where you can send anything you want to the administrators.</p>
 
-        {/* Display submitted reports */}
-        <div className="mt-6">
-          <h3 className="text-xl font-bold">Your Submitted Reports</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead>
-                <tr className="bg-[#F6F6F6]">
-                  <th className="px-4 py-2 text-left">Report ID</th>
-                  <th className="px-4 py-2 text-left">Date Submitted</th>
-                  <th className="px-4 py-2 text-left">Content</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reports.length > 0 ? (
-                  reports.map((report) => (
-                    <tr key={report.id}>
-                      <td className="px-4 py-2">#{report.id}</td>
-                      <td className="px-4 py-2">{report.date}</td>
-                      <td className="px-4 py-2">{report.content}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="px-4 py-2 text-center text-gray-500">
-                      No reports submitted yet.
-                    </td>
+      <input
+        type="text"
+        placeholder="Report Title"
+        value={reportTitle}
+        onChange={(e) => setReportTitle(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] mt-2"
+      />
+
+      <textarea
+        value={reportContent}
+        onChange={(e) => setReportContent(e.target.value)}
+        placeholder="Write your report content here..."
+        className="w-full p-4 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+      />
+
+      <div className="flex justify-end">
+        <button
+          className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
+          onClick={handleSubmitReport}
+        >
+          Submit Report
+        </button>
+      </div>
+
+      {/* Display Submitted Reports */}
+      <div className="mt-6">
+        <h3 className="text-xl font-bold">Your Submitted Reports</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto">
+            <thead>
+              <tr className="bg-[#F6F6F6]">
+                <th className="px-4 py-2 text-left">Report ID</th>
+                <th className="px-4 py-2 text-left">Title</th>
+                <th className="px-4 py-2 text-left">Date Submitted</th>
+                <th className="px-4 py-2 text-left">Content</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.length > 0 ? (
+                reports.map((report) => (
+                  <tr key={report.id}>
+                    <td className="px-4 py-2">#{report.id}</td>
+                    <td className="px-4 py-2">{report.title}</td>
+                    <td className="px-4 py-2">{report.date}</td>
+                    <td className="px-4 py-2">{report.content}</td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-4 py-2 text-center text-gray-500">
+                    No reports submitted yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
