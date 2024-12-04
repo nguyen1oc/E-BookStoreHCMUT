@@ -7,22 +7,26 @@ function PBody() {
   return (
     <>
       <AHeader/>
-      {/* Welcome Section */}
       <div
-        id="home"
-        className="relative flex justify-center items-center mt-12 mb-12"
-      >
-        {/* Background Image */}
-        <img
-          src="https://img.freepik.com/free-photo/blue-plastic-strews_23-2147988422.jpg?ga=GA1.1.1445980879.1731164125&semt=ais_hybrid"
-          alt="Image"
-          className="w-full h-[500px] object-cover opacity-50"
-        />
-        {/* Welcome Message */}
-        <h2 className="absolute ml-10 lg:justify-center text-[#070F2B] text-bold text-5xl">
-            Welcome back, Publisher!!
-        </h2>
-      </div>
+          id="home"
+          className="relative items-center mt-12 mb-12  container flex flex-wrap lg:flex-nowrap items-center bg-gray-100 shadow-lg"
+          >
+          {/* Phần chữ bên trái */}
+          <div className="w-full lg:w-2/3 text-center">
+            <h2 className="text-4xl font-bold mb-4 text-[#2D3250]">Hi, USERNAME!</h2>
+            <p className="text-[#7077A1] text-lg mb-6 leading-relaxed text-2xl">
+              ENJOY YOUR TIME IN OUR PLACE!!
+            </p>
+          </div>
+          
+          {/* Phần ảnh bên phải */}
+          <div className="w-full lg:w-1/2 flex justify-center items-center mb-6 lg:mb-0 ">
+            <img
+              src="./src/assets/bkh.jpg"
+              className="scale-100 ml-"
+            />
+          </div>
+        </div>
       <Footer/>
     </>
   );

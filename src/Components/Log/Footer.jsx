@@ -14,7 +14,7 @@ function Footer() {
                 {/* Left - Image */}
                 <div className="w-full lg:w-1/2 flex justify-center items-center mb-6 lg:mb-0">
                     <img
-                        src="https://i.pinimg.com/564x/66/13/63/6613638f9713730254461b9c8ee44bb8.jpg"
+                        src="./src/assets/crop.jpg"
                         alt="About Us"
                         className="rounded-lg shadow-lg w-13 h-13 scale-75"
                     />
