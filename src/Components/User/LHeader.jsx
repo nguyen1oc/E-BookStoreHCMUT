@@ -54,12 +54,12 @@ function LHeader() {
   return (
     <header id="lheader" className="bg-[#2D3250]">
       <div className="container mx-auto flex justify-between items-center p-6">
-        <a href="/userdashboard" className="flex items-center space-x-2">
+        <Link to="/userdashboard" className="flex items-center space-x-2">
           <span className="text-3xl font-bold text-white ml-0">HCMUT E-Bookstore</span>
-        </a>
+        </Link>
 
         <nav className="hidden xl:flex space-x-20">
-          <a href="/userdashboard" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</a>
+          <Link to="/userdashboard" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Home</Link>
           <Link to="/lbooks" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Books</Link>
           <a href="#about" className="text-2xl text-white font-bold hover:text-[#F6B17A]">About Us</a>
           <a href="#footer" className="text-2xl text-white font-bold hover:text-[#F6B17A]">Contacts</a>
