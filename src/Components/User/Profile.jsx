@@ -3,8 +3,9 @@ import { Link, Routes, Route, useNavigate } from "react-router-dom";
 import LHeader from "./LHeader";
 import Footer from "../Log/Footer";
 import ReactPaginate from "react-paginate";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NameBook from "../BookTittle";
+import LFooter from "../Login/LFooter";
 
 const Profile = () => {
   const navigate = useNavigate(); // Dùng để chuyển hướng
@@ -37,6 +38,9 @@ const Profile = () => {
             <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
               <Link to="/profile/password">Change Password</Link>
             </li>
+            <li className="cursor-pointer mb-4 hover:text-[#F6B17A]">
+              <Link to="/profile/report">Report</Link>
+            </li>
           </ul>
         </div>
 
@@ -48,6 +52,7 @@ const Profile = () => {
             <Route path="notification" element={<Notification />} />
             <Route path="books" element={<Books />} />
             <Route path="password" element={<Password />} />
+            <Route path="report" element={<Report/>} />
             <Route path="*" element={<p>Please select an option from the left.</p>} />
           </Routes>
         </div>
@@ -57,27 +62,184 @@ const Profile = () => {
   );
 };
 
-const Information = () => (
-  <div className="text-[#424769]">
-    <h2 className="font-bold">YOUR PROFILE</h2>
-    <h3 className="text-[#424769]">Configure your information to secure the account</h3>
-    <hr className="border-t-2 border-grey-500 w-full mt-1 mb-5" />
-    <div className="container flex">
-      <div className="w-1/5 text-right font-bold">
-        <p>Username:</p>
-        <p>ID:</p>
-        <p>Phone Number:</p>
-        <p>Email:</p>
+const Report = () => {
+  const [reportTitle, setReportTitle] = useState("");
+  const [reportContent, setReportContent] = useState(""); 
+  const [reports, setReports] = useState([]); 
+
+  const handleSubmitReport = async () => {
+    const user_id = localStorage.getItem("user_id")
+    if (reportTitle.trim() !== "" && reportContent.trim() !== "") {
+      try {
+        const response = await fetch('http://localhost:5000/profile/report', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({content: reportContent, title: reportTitle, user_id: user_id}),
+        });
+
+        if(response.ok) {
+          const newReport = await response.json();
+          setReports((prevReports) => [...prevReports, newReport]);
+          setReportTitle("");
+          setReportContent("");
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.error}`);
+        }
+      } catch(err) {
+        console.error("Error submitting report:", err);
+        alert("Error submitting report. Please try again.");
+      }
+    } else {
+      alert("Please fill in both title and content before submiting");
+    }
+  };
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      const user_id = localStorage.getItem("user_id");
+      if(!user_id) {
+        console.error("User ID not found!");
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:5000/profile/report?user_id=${user_id}`);
+        if(response.ok) {
+          const data = await response.json();
+          setReports(data);
+        } else {
+          console.error("Failed to fetch reports");
+        }
+      } catch (err) {
+        console.error("Error fetching reports:", error);
+      }
+    };
+
+    fetchReports();
+  }, []);
+
+  return (
+    <>
+      <div className="text-[#424769]">
+        <h2 className="text-2xl font-bold">Submit a Report</h2>
+        <hr className="border-t-2 border-grey-500 w-full mt-1 mb-1" />
+        <p classname="text-[#424769] font-bold"> This part where you can send anything you want to the administrators</p>
+
+        <input
+        type="text"
+        placeholder="Report Title"
+        name="title"
+        value={reportTitle}
+        onChange={(e) => setReportTitle(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] mt-2"/>
+
+        <div>
+          <textarea
+            value={reportContent}
+            onChange={(e) => setReportContent(e.target.value)}
+            placeholder="Write your report here..."
+            className="w-full p-4 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] mt-5 hover:ring-2 hover:ring-[#424769]"
+          />
+          <div className="flex justify-end">
+            <button
+              className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
+              onClick={handleSubmitReport}
+            >
+              Submit Report
+            </button>
+          </div>
+        </div>
+
+        {/* Display submitted reports */}
+        <div className="mt-6">
+          <h3 className="text-xl font-bold">Your Submitted Reports</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto max-width: 300px white">
+              <thead>
+                <tr className="bg-[#F6F6F6]">
+                  <th className="px-4 py-2 text-left">Report ID</th>
+                  <th className="px-4 py-2 text-left">Title</th>
+                  <th className="px-4 py-2 text-left">Date Submitted</th>
+                  <th className="px-4 py-2 text-left">Content</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.length > 0 ? (
+                  reports.map((report) => (
+                    <tr key={report.report_id}>
+                      <td className="px-4 py-2">#{report.report_id}</td>
+                      <td className="px-4 py-2">{report.title}</td>
+                      <td className="px-4 py-2">{new Date(report.report_date).toLocaleDateString()}</td>
+                      <td className="px-4 py-2 whitespace-pre-wrap break-words overflow-hidden max-w-[300px]">{report.description}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-4 py-2 text-center text-gray-500">
+                      No reports submitted yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div className="w-4/5 ml-2">
-        <p>Nguyen Thien Loc</p>
-        <p>2252460</p>
-        <p>0933366454</p>
-        <p>deptrai@gmail.com</p>
+    </>
+  );
+};
+
+
+const Information = () => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const user_id = localStorage.getItem("user_id");
+      if(!user_id) {
+        console.error("User ID not found!");
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:5000/profile/information?user_id=${user_id}`);
+        if (!res.ok) throw new Error("Failed to fetch user info");
+        const result = await res.json();
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (error) return <p>Error: {error}</p>;
+  if (!data) return <p>Loading...</p>;
+  
+  return (
+    <div className="text-[#424769]">
+      <h2 className="font-bold">YOUR PROFILE</h2>
+      <h3 className="text-[#424769]">Configure your information to secure the account</h3>
+      <hr className="border-t-2 border-grey-500 w-full mt-1 mb-5" />
+      <div className="container flex">
+        <div className="w-1/5 text-right font-bold">
+          <p>Username:</p>
+          <p>ID:</p>
+          <p>Phone Number:</p>
+          <p>Email:</p>
+        </div>
+        <div className="w-4/5 ml-2">
+          <p>{data.user_name}</p>
+          <p>{data.users_id}</p>
+          <p>0933366454</p>
+          <p>{data.email}</p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const OrderItems = () => (
   <>
@@ -175,53 +337,110 @@ const Books = () => (
   </>
 );
 
-const Password = () => (
-  <>
-              <div>
-              <div className="text-[#424769]">
-                  <h2 className="text-2xl font-bold">Password</h2>
-                  <div className="container flex mt-4 mb-4">
-                  {/* Left side - Labels */}
-                      <div className="w-1/5 text-right font-bold">
-                          <p className="mt-2">Old password:</p>
-                          <p className="mt-9">New password:</p>
-                          <p className="mt-9">Verify password:</p>
-                      </div>
 
-                  {/* Right side - Inputs */}
-                      <div className="w-4/5 ml-5">
-                          <input
-                              type="password"
-                              placeholder="Enter your old password"
-                              className="w-full p-2 border border-gray-300 mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg"
-                          />
-                          <input  
-                              type="password"
-                              placeholder="Enter your new password"
-                              className="w-full p-2 border border-gray-300 mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg"
-                          />
-                          <input
-                              type="password"
-                              placeholder="Verify your new password"
-                              className="w-full p-2 border border-gray-300 mb-4 focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769] rounded-lg"
-                          />
-                      </div>
-                  </div>
-                  <div className="flex justify-end mt-5">   
-                          <button className="border-2 border-[#7077A1] px-4 py-1 text-xl text-[#2D3250] hover:bg-[#7077A1] hover:text-white">
-                              Save
-                          </button>
-                    </div>
-                    {/* <button
-                        className="border-2 border-[#7077A1] px-4 py-1 text-xl text-[#2D3250] hover:bg-[#7077A1] hover:text-white"
-                        onClick={handlePasswordChange}
-                    >
-                        Save
-                    </button>
-                    {error && <p className="text-red-500 mt-2">{error}</p>} */}
-              </div>
-              </div>
-             </>
-);
+
+const Password = () => {
+  const navigate = useNavigate();
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault(); // Prevent form from refreshing the page
+
+    if (newPassword !== verifyPassword) {
+      setError("New password and verification password do not match.");
+      return;
+    }
+
+    const user_id = localStorage.getItem("user_id");
+    if (!user_id) {
+      setError("User ID not found!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/profile/password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id,
+          old_password: oldPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Password changed successfully!");
+        navigate("/profile");
+      } else {
+        const errorText = await response.text();
+        setError(errorText || "Failed to change the password. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setError("An unexpected error occurred. Please try again later.");
+    }
+  };
+
+  return (
+    <div className="text-[#424769]">
+      <h2 className="text-2xl font-bold">Change Password</h2>
+      <form onSubmit={handlePasswordChange} className="mt-4">
+        <div className="container flex flex-col gap-4">
+          <div>
+            <label className="font-bold">Old Password</label>
+            <input
+              type="password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              placeholder="Enter your old password"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="font-bold">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Enter your new password"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="font-bold">Verify New Password</label>
+            <input
+              type="password"
+              value={verifyPassword}
+              onChange={(e) => setVerifyPassword(e.target.value)}
+              placeholder="Re-enter your new password"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
+              required
+            />
+          </div>
+
+          {error && <p className="text-red-500">{error}</p>}
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default Profile;

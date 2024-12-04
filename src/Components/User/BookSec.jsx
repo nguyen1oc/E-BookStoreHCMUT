@@ -1,34 +1,26 @@
-import { useLocation, useHistory } from "react-router-dom";  // Add useHistory for navigation
+import { useLocation } from "react-router-dom";
 import LHeader from "./LHeader";
 import LFooter from "../Login/LFooter";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "./CartContext";
 
 const BookSec = () => {
   const location = useLocation();
-  const history = useHistory();
-  
-  // Get current book and previous book from state or localStorage
-  const { book } = location.state || {};
-  const [cart, setCart] = useState([]);
+  const { book } = location.state || {};  
+  const { addCart } = useCart(); 
+  const { addToCart } = useCart();
+  //const [cart, setCart] = useState([]);
   const [reviewContent, setReviewContent] = useState("");
   const [stars, setStars] = useState(1);
   const [userReview, setUserReview] = useState(book?.review || []);
-  const [previousBook, setPreviousBook] = useState(JSON.parse(localStorage.getItem('previousBook')) || null);
 
-  useEffect(() => {
-    // Store the current book in localStorage as the previous book
-    if (book) {
-      localStorage.setItem('previousBook', JSON.stringify(book));
-    }
-  }, [book]);
-
-  // Add to cart handler
+  // Them sach vao gio hang chu yeu thong bao cho dep
   const handleAddToCart = () => {
-    const updatedCart = [...cart, book];
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    //setCart([...cart, book]);
+    if (!book) return;
+    addToCart(book);
     toast.success(`${book.title} has been added to your cart!`, {
       position: "bottom-right", 
       autoClose: 4000, 
@@ -40,7 +32,7 @@ const BookSec = () => {
     });
   };
 
-  // Review submit handler
+  // Khi them mot cai ri viu moi vao
   const handleReviewSubmit = () => {
     if (reviewContent.trim() === "") {
       toast.error("Please write a review before submitting!");
@@ -74,39 +66,39 @@ const BookSec = () => {
     <>
       <LHeader />
         
-      <div className="container bg-white p-8 rounded-lg w-3/4 mx-auto mt-10 mb-10">
-        <div className="container flex lg:flex-nowrap items-center">
-          {/* Book Image */}
-          <div className="w-4/5 flex justify-center items-center mb-0 mt-20">
-            <img
-              src={book.image}
-              alt="Book Cover"
-              className="rounded-lg shadow-lg w-64 h-80 object-cover"
-            />
-          </div>
+      <div className="  container bg-white p-8 rounded-lg w-3/4 mx-auto mt-10 mb-10">
+      <div className="container flex lg:flex-nowrap items-center">
+        {/* Hình ảnh sách */}
+        <div className="w-4/5 flex justify-center items-center mb-0 mt-20">
+          <img
+            src={book.image}
+            alt="Book Cover"
+            className="rounded-lg shadow-lg w-64 h-80 object-cover"
+          />
+        </div>
 
-          {/* Book Info */}
-          <div className="w-3/5 bg-gray-200 p-6 rounded-lg mt-10">
-            <h2 className="text-5xl font-bold text-[#2D3250]">{book.title}</h2>
-            <p className="text-xl text-#7077A1 mt-5">Book ID: {book.Book_ID}</p>
-            <p className="text-xl text-#7077A1 mt-5">Author: {book.author}</p>
-            <p className="text-xl text-#7077A1 mt-5">Publisher: {book.publisher}</p>
-            <p className="text-xl text-#7077A1 mt-5">Genre: {book.genre}</p>
-            <p className="text-xl text-#7077A1 mt-5">Publish Date: {book.Publish_date}</p>
-            <p className="text-xl text-#7077A1 mt-5">Price: {book.price.toLocaleString()} VND</p>
-            <p className="text-xl text-#7077A1 mt-5">Conditions: {book.conditions}</p>
+        {/* Thông tin sách */}
+        <div className="w-3/5 bg-gray-200 p-6 rounded-lg mt-10">
+          <h2 className="text-5xl font-bold text-[#2D3250]">{book.title}</h2>
+          <p className="text-xl text-#7077A1 mt-5">Book ID: {book.Book_ID}</p>
+          <p className="text-xl text-#7077A1 mt-5">Author: {book.author}</p>
+          <p className="text-xl text-#7077A1 mt-5">Publisher: {book.publisher}</p>
+          <p className="text-xl text-#7077A1 mt-5">Genre: {book.genre}</p>
+          <p className="text-xl text-#7077A1 mt-5">Publish Date: {book.Publish_date}</p>
+          <p className="text-xl text-#7077A1 mt-5">Price: {book.price.toLocaleString()} VND</p>
+          <p className="text-xl text-#7077A1 mt-5">Conditions: {book.conditions}</p>
 
-            {/* Add to Cart Button */}
-            <div className="mt-5">
-              <button
-                onClick={handleAddToCart}
-                className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
-              >
-                Add to Cart
-              </button>
-            </div>
+          {/* Nút Add to Cart */}
+          <div className="mt-5">
+            <button
+              onClick={handleAddToCart}
+              className="bg-[#2D3250] text-white py-2 px-6 rounded-lg hover:bg-[#7077A1] focus:outline-none"
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Review Section */}
