@@ -215,6 +215,22 @@ app.get("/userdashboard", async (req, res) => {
     }
 });
 
+app.post("/forget", async (req, res) => {
+    const {email, new_password} = req.body;
+
+    try {
+        const search_email = await client.query("SELECT email FROM users WHERE email = $1", [email]);
+        if(search_email.rows.length == 0) {
+            res.status(404).json({error: "Email not found!"});
+        }
+        const insert_new_password = await client.query("UPDATE users SET passwords = $1 WHERE email = $2", [new_password, email]);
+        res.status(200).json({message: "Change password complete"});
+    } catch(err) {
+        console.error("Error in reset the password", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
