@@ -1,17 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
 import LHeader from "./LHeader";
 import Footer from "../Log/Footer";
-import NameBook from "../BookTittle"; // Danh sách sách
 import ReactPaginate from "react-paginate";
 import { useNavigate } from "react-router-dom";
 
 const LBook = () => {
   const [currentPage, setCurrentPage] = useState(0);
+  const[books, setBooks] = useState([]);
 
   const booksPerPage = 8; // Số sách hiển thị trên mỗi trang
   const offset = currentPage * booksPerPage; // Vị trí bắt đầu cho mỗi trang
-  const currentBooks = NameBook.slice(offset, offset + booksPerPage); // Lấy danh sách sách hiện tại theo trang
+  const currentBooks = books.slice(offset, offset + booksPerPage); // Lấy danh sách sách hiện tại theo trang
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/lbook");
+        if(!response.ok) {
+          throw new Error("Failed to fetch books");
+        }
+        const data = await response.json();
+        setBooks(data);
+      } catch(err) {
+        console.error("Error fetching books:", err);
+      }
+    };
+    fetchBooks();
+  }, []);
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
@@ -66,12 +82,12 @@ const LBook = () => {
         {currentBooks.map((book, index) => (
             
           <div
-            key={index}
+            key={book.book_id}
             onClick={() => handleBookClick(book)}
             className="w-64 m-4 bg-white shadow-xl rounded-lg overflow-hidden hover:ring-2 hover:ring-[#2D3250]"
           >
             <img
-              src={book.image}
+              src={book.image_url}
               alt="Book Cover"
               className="w-full h-64 object-cover"
             />
@@ -79,11 +95,11 @@ const LBook = () => {
               <h3 className="text-xl font-semibold text-gray-800">
                 {book.title}
               </h3>
-              <p className="text-sm text-gray-600">Author: {book.author}</p>
-              <p className="text-sm text-gray-600">Publisher: {book.publisher}</p>
+              <p className="text-sm text-gray-600">Author: {book.user_name} </p>
+              <p className="text-sm text-gray-600">Publisher: {book.publisher_name}</p>
               <p className="text-sm text-gray-600">Genre: {book.genre}</p>
               <p className="text-lg font-bold text-gray-800 mt-2">
-                Price: {book.price}
+                Price: {Number(book.price).toLocaleString("en-US")} VNĐ
               </p>
             </div>
           </div>
@@ -95,7 +111,7 @@ const LBook = () => {
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}
-          pageCount={Math.ceil(NameBook.length / booksPerPage)} // Tổng số trang
+          pageCount={Math.ceil(books.length / booksPerPage)} // Tổng số trang
           onPageChange={handlePageChange} // Hàm chuyển trang
           containerClassName={
             "pagination flex space-x-2 text-[#2D3250] font-semibold"

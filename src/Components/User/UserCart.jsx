@@ -3,12 +3,15 @@ import LFooter from "../Login/LFooter";
 import LHeader from "./LHeader";
 import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
+import { useNavigate } from "react-router-dom";
+
 
 function UserCart() {
+  const navigate = useNavigate();
   const { cart, removeItem } = useCart();
 
   const calculateTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + Number(item.price), 0);
   };
 
   const calculateTotalItems = () => {
@@ -29,6 +32,50 @@ function UserCart() {
     removeItem(itemOrder); // Xóa sản phẩm theo order
   };
 
+  const handlePurchase = async () => {
+    const user_id = localStorage.getItem("user_id");
+    const discount_order = calculateTotalItems() > 5 ? 0.1 : 0;
+    try {
+      const response = await fetch('http://localhost:5000/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({user_ID: user_id}),
+      });
+
+      if(response.ok) {
+        const order_data = await response.json();
+        const order_id = order_data.order_id;
+
+        const order_items = cart.map((item) => ({
+          book_id: item.book_id,
+          quantity: 1,
+          discount: discount_order
+        }));
+
+        const orderItemResponse = await fetch("http://localhost:5000/order_item", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({order_id: order_id, items: order_items}),
+        });
+
+        if(orderItemResponse.ok) {
+          alert("Purchase successfully");
+          navigate("/userdashboard");
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
+      }
+    } catch(err) {
+      console.error("Error submitting report:", err);
+      alert("Error submitting report. Please try again.");
+    }
+  }
+
   return (
     <>
       <LHeader />
@@ -41,14 +88,14 @@ function UserCart() {
             cart.map((item, index) => (
               <div key={index} className="flex items-center justify-between mb-4 p-4 border-b border-gray-300">
                 <div className="flex items-center">
-                  <img src={item.image} alt={item.title} className="w-16 h-20 object-cover mr-4" />
+                  <img src={item.image_url} alt={item.title} className="w-16 h-20 object-cover mr-4" />
                   <div>
                     <h3 className="text-lg font-semibold text-[#2D3250]">{item.title}</h3>
-                    <p className="text-sm text-gray-500">{item.author}</p>
+                    <p className="text-sm text-gray-500">{item.user_name}</p>
                   </div>
                 </div>
                 <div className="text-right mt-3">
-                  <p className="text-lg font-semibold text-[#2D3250]">{item.price.toLocaleString()} VND</p>
+                  <p className="text-lg font-semibold text-[#2D3250]">{Number(item.price).toLocaleString("en-US")} VND</p>
                   <button
                     className="text-red-500 text-sm hover:text-red-700"
                     onClick={() => handleRemoveItem(item.order)} 
@@ -69,21 +116,21 @@ function UserCart() {
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
             <span>Before Discount:</span>
-            <span>{calculateTotalPrice().toLocaleString()} VND</span>
+            <span>{Number(calculateTotalPrice()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-between items-center mt-4">
             <span>Discount:</span>
-            <span className="text-green-600">- {calculateDiscount().toLocaleString()} VND</span>
+            <span className="text-green-600">- {Number(calculateDiscount()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
             <span>Total:</span>
-            <span>{calculateFinalTotal().toLocaleString()} VND</span>
+            <span>{Number(calculateFinalTotal()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-center mt-8">
-            <button className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A]">
+            <button onClick={handlePurchase} className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A]">
               <Link to="/userdashboard">Purchase</Link>
             </button>
           </div>

@@ -241,53 +241,113 @@ const Information = () => {
   );
 };
 
-const OrderItems = () => (
-  <>
-        <div className="text-[#424769]">
-  <h2 className="text-2xl font-bold">Your Order History</h2>
-  <h3 className="text-[#424769]">
-    Here are the details of the books you've purchased
-  </h3>
-  <hr className="border-t-2 border-grey-500 w-full mt-1 mb-5" />
+const OrderItems = () => {
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState(null);
 
-  {/* Bảng hiển thị thông tin đơn hàng */}
-  <div className="overflow-x-auto">
-    <table className="min-w-full table-auto">
-      <thead>
-        <tr className="bg-[#F6F6F6]">
-          <th className="px-4 py-2 text-left">Order ID</th>
-          <th className="px-4 py-2 text-left">Book Title</th>
-          <th className="px-4 py-2 text-left">Purchase Date</th>
-          <th className="px-4 py-2 text-left">Price</th>
-          <th className="px-4 py-2 text-left">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {NameBook.map((book, index) => (
-          <tr key={book.Book_ID}>
-            <td className="px-4 py-2">#{index + 1}</td>
-            <td className="px-4 py-2">{book.title}</td>
-            <td className="px-4 py-2">{book.Publish_date}</td>
-            <td className="px-4 py-2">{book.price.toLocaleString()} VND</td>
-            <td className="px-4 py-2">{book.conditions}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const user_id = localStorage.getItem("user_id");
+      if (!user_id) {
+        setError("User ID not found!");
+        return;
+      }
 
-  {/* Tính tổng tiền đã chi */}
+      try {
+        const response = await fetch(`http://localhost:5000/profile/order-items?user_id=${user_id}`);
+        if (!response.ok) {
+          setError("Failed to fetch order history");
+          return;
+        }
+        const data = await response.json();
+        const groupedOrders = Object.values(groupOrdersByOrderId(data)); // Nhóm các đơn hàng
+        setOrders(groupedOrders);
+      } catch (err) {
+        setError("Error fetching orders");
+        console.error(err);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const groupOrdersByOrderId = (orders) => {
+    return orders.reduce((acc, curr) => {
+      const { order_id, total_money, order_date, title, quantity } = curr;
+
+      // Nếu order_id chưa tồn tại trong accumulator, thêm mới
+      if (!acc[order_id]) {
+        acc[order_id] = {
+          total_money,
+          order_id,
+          order_date,
+          items: [],
+        };
+      }
+
+      // Thêm sách vào mảng items của order_id
+      acc[order_id].items.push({ title, quantity });
+
+      return acc;
+    }, {});
+  };
+
+  const calculateTotalSpent = () => {
+    return orders.reduce((total, order) => total + Number(order.total_money), 0);
+  };
+
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (orders.length === 0) return <p className="text-gray-500">No orders found</p>;
+
+  return (
+    <div className="text-[#424769]">
+      <h2 className="text-2xl font-bold">Your Order History</h2>
+      <h3 className="text-[#424769]">Here are the details of the books you've purchased</h3>
+      <hr className="border-t-2 border-grey-500 w-full mt-1 mb-5" />
+
+      {/* Hiển thị danh sách các đơn hàng */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto">
+          <thead>
+            <tr className="bg-[#F6F6F6]">
+              <th className="px-4 py-2 text-left">Order ID</th>
+              <th className="px-4 py-2 text-left">Books</th>
+              <th className="px-4 py-2 text-left">Price</th>
+              <th className="px-4 py-2 text-left">Purchase Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.order_id}>
+                <td className="px-4 py-2">#{order.order_id}</td>
+                <td className="px-4 py-2">
+                  <ol className="list-disc pl-5">
+                    {order.items.map((item, idx) => (
+                      <li key={idx}>
+                        {item.title} (x{item.quantity})
+                      </li>
+                    ))}
+                  </ol>
+                </td>
+                <td className="px-4 py-2">{order.total_money}</td>
+                <td className="px-4 py-2">{new Date(order.order_date).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Tính tổng tiền đã chi */}
   <div className="mt-4 text-right font-bold text-xl">
     <p>
       Total Money Spent:{" "}
-      {NameBook.reduce((total, book) => total + book.price, 0).toLocaleString()}{" "}
+      {calculateTotalSpent()}{" "}
       VND
     </p>
   </div>
-</div>
-
-      </>
-);
+    </div>
+  );
+};
 
 const Notification = () => (
   <>
@@ -298,7 +358,36 @@ const Notification = () => (
     </>
 );
 
-const Books = () => (
+const Books = () => {
+  const [books, setBook] = useState([]);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const user_id = localStorage.getItem("user_id");
+      if (!user_id) {
+        setError("User ID not found!");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/profile/books?user_id=${user_id}`);
+        if (!response.ok) {
+          setError("Failed to fetch book history");
+          return;
+        }
+        const data = await response.json();
+        setBook(data);
+      } catch (err) {
+        setError("Error fetching books");
+        console.error(err);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  return(
   <>
     <div className="text-[#424769]">
     <h2 className="text-2xl font-bold">Books Purchased</h2>
@@ -306,25 +395,23 @@ const Books = () => (
     <hr className="border-t-2 border-grey-500 w-full mt-1 mb-5" />
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {NameBook.map((book) => (
+      {books.map((book) => (
         <div
-          key={book.Book_ID}
+          key={book.book_id}
           className="border border-gray-300 rounded-lg p-4 bg-white shadow-md hover:bg-gray-100"
         >
           <img
-            src={book.image}
+            src={book.image_url}
             alt={book.title}
             className="h-48 w-full object-cover rounded-md"
           />
           <h3 className="text-xl font-semibold mt-2">{book.title}</h3>
-          <p className="text-[#2D3250]">Author: {book.author}</p>
-          <p className="text-[#2D3250]">Price: {book.price.toLocaleString()} VND</p>
-          <p className="text-[#2D3250]">Status: {book.conditions}</p>
+          <p className="text-[#2D3250]">Author: {book.user_name}</p>
 
           {/* Nút View Details */}
           <button
             className="mt-3 bg-[#7077A1] text-white px-4 py-2 rounded-md hover:bg-[#F6B17A]"
-            onClick={() => handleViewDetails(book.Book_ID)}
+            onClick={() => handleViewDetails(book.book_id)}
           >
             Read
           </button>
@@ -335,7 +422,7 @@ const Books = () => (
 
          
   </>
-);
+)};
 
 
 
