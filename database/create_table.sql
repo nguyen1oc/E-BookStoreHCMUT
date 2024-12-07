@@ -18,7 +18,7 @@ CREATE TABLE Report(
 -- Author --
 CREATE TABLE Author(
 	Author_ID bigserial PRIMARY KEY,
-	Number_of_books NUMERIC(5) NOT NULL CHECK(Number_of_books >= 1),
+	Number_of_books NUMERIC(5) NOT NULL CHECK(Number_of_books >= 0),
 	FOREIGN KEY (Author_ID) REFERENCES Users(Users_ID) ON DELETE CASCADE
 );
 
@@ -54,6 +54,7 @@ CREATE TABLE Book(
 	Publish_date DATE NOT NULL,
 	Publisher_ID bigserial,
 	Conditions TEXT NOT NULL,
+	Image_URL TEXT NOT NULL,
 	
 	FOREIGN KEY (Publisher_ID) REFERENCES Publisher(Publisher_ID) ON DELETE SET NULL
 );
@@ -87,4 +88,4 @@ CREATE TABLE Writes (
 	PRIMARY KEY(Author_ID, Book_ID),
 	FOREIGN KEY (Book_ID) REFERENCES Book(Book_ID) ON DELETE CASCADE,
 	FOREIGN KEY (Author_ID) REFERENCES Author(Author_ID) ON DELETE SET NULL
-)
+);

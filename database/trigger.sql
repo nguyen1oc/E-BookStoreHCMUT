@@ -24,7 +24,7 @@ $$
 DECLARE
    sum_money NUMERIC(15,3);
 BEGIN	
-	sum_money = NEW.Quantity * ((1 - NEW.Discount) 
+	sum_money = NEW.Quantity * ((1 - NEW.Discount )
 				* (SELECT Price FROM Book  WHERE Book_ID = NEW.Book_ID));
 
 	UPDATE orders
