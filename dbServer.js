@@ -73,10 +73,10 @@ app.post("/signup", async (req, res) => {
         // Insert new user
         const insertUserQuery = 'INSERT INTO users (email, phone_number, user_name, passwords) VALUES ($1, $2, $3, $4) RETURNING users_id';
         const insertResult = await client.query(insertUserQuery, [email, phonenumber, username, password]);
-
-        console.log("New user created with ID:", insertResult.rows[0].user_id);
+        const customer_ID = insertResult.rows[0].users_id;
+        console.log("New user created with ID:", customer_ID);
         const insert_customer_query = "INSERT INTO customer (customer_id, money_spent) VALUES ($1, $2)";
-        const insert_customer_result = await client.query(insert_customer_query, [insertResult.rows[0].users_id, 0]);
+        const insert_customer_result = await client.query(insert_customer_query, [customer_ID, 0]);
         res.status(201).json({message: 'User created successfully'});
     } catch (err) {
         console.error("Error during signup:", err);
@@ -200,14 +200,12 @@ app.post("/profile/report", async (req, res) => {
 
 app.get("/userdashboard", async (req, res) => {
     const user_ID = req.query.user_id;
-    console.log(user_ID);
     if(!user_ID) {
         return res.status(400).json({error});
     }
 
     try {
         const result = await client.query("SELECT user_name FROM users WHERE users_id = $1", [user_ID]);
-        console.log(result.rows);
         res.status(200).json(result.rows[0]);
     } catch(err) {
         console.error("Error finding user", err);
@@ -227,6 +225,117 @@ app.post("/forget", async (req, res) => {
         res.status(200).json({message: "Change password complete"});
     } catch(err) {
         console.error("Error in reset the password", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.get("/lbook", async (req, res) => {
+    try {
+        const book_information = await client.query("SELECT b.book_id, u.user_name, p.publisher_name, b.genre, b.price, b.title, b.conditions, b.image_url FROM book b JOIN publisher p ON b.publisher_id = p.publisher_id JOIN writes w ON b.book_id = w.book_id JOIN users u ON w.author_id = u.users_id;");
+        res.status(200).json(book_information.rows);
+    } catch(err) {
+        console.error("Error fetching books", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.post("/order", async (req, res) => {
+    const {user_ID} = req.body;
+
+    try {
+        const date = new Date();
+        const generate_order =  await client.query("INSERT INTO orders (order_date, customer_id) VALUES ($1, $2) RETURNING order_id", [date, user_ID]);
+        res.status(200).json(generate_order.rows[0]);
+    } catch(err) {
+        console.error("Error: Cannot create a new order", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.post("/order_item", async (req, res) => {
+    const {order_id, items} = req.body;
+    console.log(order_id);
+
+    if(!order_id || !items || items.length == 0) {
+        return res.status(400).json({error: "Invalid order details"});
+    }
+
+    try {
+        const insert_order_item = "INSERT INTO order_item (order_id, book_id, quantity, discount) VALUES ($1, $2, $3, $4) RETURNING review_id";
+
+        for(const item of items) {
+            const {book_id, quantity, discount} = item;
+            const check_same_book = await client.query("SELECT * FROM order_item WHERE order_id = $1 AND book_id = $2", [order_id, book_id]);
+            if(check_same_book.rows.length == 0) {
+                await client.query(insert_order_item, [order_id, book_id, quantity, discount]);
+            } else {
+                await client.query("UPDATE order_item SET quantity = quantity + 1 WHERE order_id = $1 AND book_id = $2", [order_id, book_id]);
+            }
+        }
+        res.status(200).json({message: "Order items saved successfully"});
+    } catch(err) {
+        console.error("Error saving order items:", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.get("/profile/order-items", async (req, res) => {
+    const user_id = req.query.user_id;
+    console.log(user_id);
+    if(!user_id) {
+        return res.status(400).json({error: "User ID is required"});
+    }
+
+    try {
+        const orders = await client.query("SELECT o.order_id, b.title, i.quantity, o.total_money, o.order_date FROM orders o JOIN order_item i ON o.order_id = i.order_id JOIN book b ON i.book_id = b.book_id WHERE o.customer_id = $1", [user_id]);
+        res.status(200).json(orders.rows);
+    } catch(err) {
+        console.error("Error fetching order history", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.get("/profile/books", async (req, res) => {
+    const user_id = req.query.user_id;
+    if(!user_id) {
+        return res.status(400).json({error: "User ID is required"});
+    }
+
+    try {
+        const show_book = await client.query("SELECT DISTINCT b.book_id, b.title, u.user_name, b.image_url FROM book b JOIN writes w ON b.book_id = w.book_id JOIN users u ON w.author_id = u.users_id JOIN order_item i ON b.book_id = i.book_id JOIN orders o ON i.order_id = o.order_id WHERE o.customer_id = $1", [user_id]);
+        res.status(200).json(show_book.rows);
+    } catch(err) {
+        console.error("Error fetching book history", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.post("/review", async (req, res) => {
+    const {review_description, stars, user_id, book_id} = req.body;
+
+    try {
+        const view_order = await client.query("SELECT i.book_id, o.customer_id FROM orders o JOIN order_item i ON o.order_id = i.order_id WHERE o.customer_id = $1 AND i.book_id = $2", [user_id, book_id]);
+        if(view_order.rows.length == 0) {
+            return res.status(400).json({error: "You must buy this book to review"});
+        } 
+        const date = new Date();
+        const post_review = await client.query("INSERT INTO review (review_description, review_date, stars) VALUES ($1, $2, $3) RETURNING review_id", [review_description, date, stars]);
+        const review_id = post_review.rows[0].review_id;
+        await client.query("UPDATE order_item SET review_id = $1 FROM orders o WHERE o.customer_id = $2 AND o.order_id = order_item.order_id AND order_item.book_id = $3", [review_id, user_id, book_id]);
+        res.status(200).json({message: "Post view successfully"});
+    } catch(err) {
+        console.error("Fail to post your review!", err);
+        res.status(500).json({error: "Internal server error"});
+    }
+});
+
+app.get("/view_review", async (req, res) => {
+    const {book_id} = req.query; 
+    try {
+        const get_review = await client.query("SELECT r.review_id, r.review_description, r.review_date, r.stars FROM review r JOIN order_item o ON r.review_id = o.review_id WHERE o.book_id = $1", [book_id]);
+        res.status(200).json(get_review.rows);
+    } catch(err) {
+        console.error("Fail to get review", err);
         res.status(500).json({error: "Internal server error"});
     }
 });
