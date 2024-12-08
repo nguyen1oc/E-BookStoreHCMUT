@@ -8,39 +8,37 @@ import { useNavigate } from "react-router-dom";
 
 const LBook = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [filteredBooks, setFilteredBooks] = useState(NameBook);
 
   const booksPerPage = 8; // Số sách hiển thị trên mỗi trang
-
-  // Filter books based on the search query
-  const filteredBooks = NameBook.filter((book) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      book.title.toLowerCase().includes(query) ||
-      book.author.toLowerCase().includes(query) ||
-      book.genre.toLowerCase().includes(query)
-    );
-  });
-
-  // Calculate books to display based on current page and filtered results
-  const booksToDisplay = filteredBooks.slice(
-    currentPage * booksPerPage,
-    (currentPage + 1) * booksPerPage
-  );
+  const offset = currentPage * booksPerPage; // Vị trí bắt đầu cho mỗi trang
+  const currentBooks = filteredBooks.slice(offset, offset + booksPerPage); // Lấy danh sách sách hiện tại theo trang
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(0); // Reset to the first page on new search
   };
 
   const navigate = useNavigate();
 
   const handleBookClick = (book) => {
     navigate("/booksec", { state: { book } });
+  };
+
+  // Xử lý sự kiện tìm kiếm
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = NameBook.filter(
+      (book) =>
+        book.title.toLowerCase().includes(value) ||
+        book.author.toLowerCase().includes(value) ||
+        book.genre.toLowerCase().includes(value)
+    );
+
+    setFilteredBooks(filtered);
+    setCurrentPage(0);
   };
 
   return (
@@ -52,19 +50,20 @@ const LBook = () => {
           <div className="relative w-3/5">
             <input
               type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
+              value={searchTerm}
+              onChange={handleSearch}
               className="w-full py-2 pl-5 pr-4 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#2D3250] hover:ring-2 hover:ring-[#7077A1]"
               placeholder="What do you want to read?"
             />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-[#2D3250] px-4 py-2 rounded-lg focus:outline-none hover:bg-[#7077A1]">
+            <button
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-[#2D3250] px-4 py-2 rounded-lg focus:outline-none hover:bg-[#7077A1]"
+            >
               <IoSearch />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Arrange Buttons */}
       <div className="bg-[#7077A1] p-3 flex items-center justify-center mr-20 ml-20">
         <div className="flex space-x-4 hidden xl:flex">
           <p className="px-4 py-2 text-bold text-white text-xl">ARRANGE BY:</p>
@@ -83,9 +82,9 @@ const LBook = () => {
         </div>
       </div>
 
-      {/* Display Books */}
       <div className="ml-20 mr-20 bg-[#f3f4f6] p-6 flex flex-wrap justify-center">
-        {booksToDisplay.map((book, index) => (
+        {/* Hiển thị các sách thuộc trang hiện tại */}
+        {currentBooks.map((book, index) => (
           <div
             key={index}
             onClick={() => handleBookClick(book)}
@@ -111,26 +110,20 @@ const LBook = () => {
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* Phân trang */}
       <div className="flex justify-center bg-[#7077A1] p-3 flex mr-20 ml-20">
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}
-          pageCount={Math.ceil(filteredBooks.length / booksPerPage)}
-          onPageChange={handlePageChange}
+          pageCount={Math.ceil(filteredBooks.length / booksPerPage)} // Tổng số trang
+          onPageChange={handlePageChange} // Hàm chuyển trang
           containerClassName={
             "pagination flex space-x-2 text-[#2D3250] font-semibold"
           }
-          activeClassName={"text-[#2D3250] px-4 py-2 rounded bg-[#F6B17A]"}
-          pageClassName={
-            "bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"
-          }
-          previousClassName={
-            "bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"
-          }
-          nextClassName={
-            "bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"
-          }
+          activeClassName={"text-[#2D3250] px-4 py-2 rounded bg-[#F6B17A] "}
+          pageClassName={"bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"}
+          previousClassName={"bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"}
+          nextClassName={"bg-[#424769] text-white py-2 px-4 rounded hover:bg-[#2D3250]"}
         />
       </div>
       <Footer />
