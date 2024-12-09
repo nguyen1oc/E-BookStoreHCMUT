@@ -4,6 +4,9 @@ import LogHeader from "./LoginHeader";
 import LFooter from "./LFooter";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Forget(){
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -13,6 +16,7 @@ function Forget(){
   const [emailError, setEmailError] = useState(""); 
   const location = useLocation();
   const { userType } = location.state || {}; 
+  const navigate = useNavigate();
 
   const validatePasswordMatch = (password, verifyPassword) => {
     if (password ==="" || verifyPassword === "") setPasswordError("")
@@ -36,6 +40,50 @@ function Forget(){
         setEmailError("");
       }
     }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/forget", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: email, new_password: newPassword}),
+      });
+
+      if (response.ok) {
+        toast.success("Reset password successfully!", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        setTimeout(() => {
+          navigate("/select");
+        }, 2000);
+      } else {
+          const errorText = await response.text();
+          console.error("Change password failed:", errorText);
+          toast.error(JSON.parse(errorText).error, {
+            position: "bottom-right",
+            autoClose: 2000, 
+            hideProgressBar: false, 
+            closeOnClick: true, 
+            pauseOnHover: true, 
+            draggable: true, 
+            progress: undefined, 
+            });
+      }
+  } catch (error) {
+      console.error("Error during reset password:", error);
+  }
   };
   
     return(
@@ -61,16 +109,6 @@ function Forget(){
                      {emailError && (
                         <p className="text-red-500 text-sm mt-2">{emailError}</p>
                       )}
-                 </div>
-                 <div>
-                   <label className="block text-sm font-medium text-[#2D3250]">Old Password:</label>
-                   <input
-                     type="password"
-                     value={oldPassword}
-                     onChange={(e) => setOldPassword(e.target.value)}
-                     className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
-                     placeholder="Enter old password"
-                   />
                  </div>
                  <div>
                   <label className="block text-sm font-medium text-[#2D3250]">New Password:</label>
@@ -106,11 +144,10 @@ function Forget(){
                </div>
                <button
                  type="submit"
+                 onClick={handleResetPassword}
                  className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
                >
-                <Link to = "/select">
                  Reset Password
-                 </Link>
                </button>
              <div className="flex justify-between mt-4 mb-2">
                <button
@@ -124,6 +161,7 @@ function Forget(){
            </>
         </div>
       </div>
+      <ToastContainer/>
             <LFooter/>
     </>
     );

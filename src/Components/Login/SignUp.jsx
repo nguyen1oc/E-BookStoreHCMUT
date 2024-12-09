@@ -3,7 +3,10 @@ import LogHeader from "./LoginHeader";
 import LFooter from "./LFooter";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
-function Signup() {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function Signup({ handleGoBackToLogin }) {
   const [email, setEmail] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
   const [username, setUsername] = useState("");
@@ -17,7 +20,7 @@ function Signup() {
   const location = useLocation();
   const { userType } = location.state || {};
 
-    const validatePhoneNumber = (number) => {
+  const validatePhoneNumber = (number) => {
     if (number === "") setPhoneError("");
     else{
       const phoneRegex = /^[0-9]{9,11}$/; 
@@ -51,7 +54,6 @@ function Signup() {
       }
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,15 +64,35 @@ function Signup() {
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, email, password }),
+          body: JSON.stringify({ username, phonenumber, email, password }),
       });
 
       if (response.ok) {
+        toast.success("Sign up successful!", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        setTimeout(() => {
           navigate("/select");
+        }, 2000);
       } else {
           const errorText = await response.text();
           console.error("Login failed:", errorText);
-          alert("Login failed: " + errorText);
+          toast.error(JSON.parse(errorText).error, {
+            position: "bottom-right",
+            autoClose: 2000, 
+            hideProgressBar: false, 
+            closeOnClick: true, 
+            pauseOnHover: true, 
+            draggable: true, 
+            progress: undefined, 
+            });
       }
   } catch (error) {
       console.error("Error during login:", error);
@@ -85,13 +107,14 @@ function Signup() {
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">
             <>
             <h2 className="text-2xl font-bold text-center mb-6 text-[#2D3250]">Sign Up as {userType}</h2>
-              
-                <div className="space-y-4">
+              <form action = "/signup" method = "POST" onSubmit = {handleSubmit}>
+              <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[#2D3250]">Username:</label>
                     <input
                       type="text"
                       value={username}
+                      name = "username"
                       onChange={(e) => setUsername(e.target.value)}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
                       placeholder="Enter username"
@@ -102,6 +125,7 @@ function Signup() {
                     <input
                       type="text"
                       value={phonenumber}
+                      name = "phonenumber"
                       onChange={(e) => {
                       setPhonenumber(e.target.value);
                       validatePhoneNumber(e.target.value); 
@@ -118,6 +142,7 @@ function Signup() {
                     <input
                       type="email"
                       value={email}
+                      name = "email"
                       onChange={(e) => {
                         setEmail(e.target.value)
                         validateEmail(e.target.value);
@@ -134,6 +159,7 @@ function Signup() {
                     <input
                       type="password"
                       value={password}
+                      name = "password"
                       onChange={(e) => {
                         setPassword(e.target.value);
                         validatePasswordMatch(e.target.value, verifyPassword);
@@ -165,21 +191,23 @@ function Signup() {
                   type="submit"
                   className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A] mt-4"
                 >
-                  <Link to ="/select">
                   Sign Up
-                  </Link>
                 </button>
+              </form>
               <div className="flex justify-between mt-4 mb-2">
                 <button
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm"
                 >
-                <Link to="/loginform" state={{ userType }}>Back to Login</Link>
+                <Link to ="/loginform" state={{userType}}>
+                  Back to Login
+                  </Link>
                 </button>
               </div>
               
             </>
         </div>
       </div>
+      <ToastContainer/>
             <LFooter/>
     </>
   );

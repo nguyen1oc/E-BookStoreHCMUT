@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import LFooter from "./LFooter";
 import LogHeader from "./LoginHeader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function LoginForm() {
   // Cac ham de giu cac du lieu va chuyeh huong
@@ -10,8 +12,22 @@ function LoginForm() {
   const location = useLocation();
   const { userType } = location.state || {}; 
 
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (email) => {
+    if (email == "") {
+      setEmailError("");
+    } else {
+      const emailRegex = /@/;
+      if (!emailRegex.test(email)) {
+        setEmailError("Invalid email format. Please include '@'.");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,23 +38,43 @@ function LoginForm() {
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
           const data = await response.json();
-          console.log("Login successful:", data);
-          if (userType === "User") {
-              navigate("/userdashboard");
-          } else if (userType === "Publisher") {
-              navigate("/publisherdashboard");
-          } else if (userType === "Author") {
-              navigate("/authordashboard");
-          }
+          localStorage.setItem("user_id", data.user_id);
+          toast.success("Log in successful!", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
+          setTimeout(() => {
+            if (userType === "User") {
+                navigate("/userdashboard");
+            } else if (userType === "Publisher") {
+                navigate("/publisherdashboard");
+            } else if (userType === "Author") {
+                navigate("/authordashboard");
+            }
+          }, 2000);
       } else {
           const errorText = await response.text();
           console.error("Login failed:", errorText);
-          alert("Login failed: " + errorText);
+          toast.error(JSON.parse(errorText).error, {
+            position: "bottom-right",
+            autoClose: 2000, 
+            hideProgressBar: false, 
+            closeOnClick: true, 
+            pauseOnHover: true, 
+            draggable: true, 
+            progress: undefined, 
+            });
       }
   } catch (error) {
       console.error("Error during login:", error);
@@ -54,7 +90,7 @@ function LoginForm() {
         <div className="bg-white p-8 rounded-lg w-1/3 shadow-lg">
             <>
               <h2 className="text-2xl font-bold text-center mb-6 text-[#2D2350]">
-                Login
+                Login as {userType}
               </h2>
               <form action = "/login" method = "POST" onSubmit={handleSubmit}>
                 <div className="space-y-4">
@@ -62,13 +98,19 @@ function LoginForm() {
                     <label className="block text-sm font-medium text-[#2D3250]">Username:</label>
                     <input
                       type="text"
-                      value={username}
-                      name = "username"
-                      onChange={(e) => setUsername(e.target.value)}
+                      value={email}
+                      name = "email"
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        validateEmail(e.target.value);
+                      }}
                       className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#424769] hover:ring-2 hover:ring-[#424769]"
-                      placeholder="Enter username"
+                      placeholder="Enter email"
                       required
                     />
+                    {emailError && (
+                        <p className="text-red-500 text-sm mt-2">{emailError}</p>
+                      )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#2D3250]">Password:</label>
@@ -88,7 +130,7 @@ function LoginForm() {
                 <button
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                 >
-                  <Link to = "/signup">
+                  <Link to = "/signup" state = {{userType}}>
                   Sign Up
                   </Link>
                 </button>
@@ -96,7 +138,7 @@ function LoginForm() {
                   className="text-[#7077A1] hover:text-[#2D3250] text-sm mt-2"
                   
                 >
-                  <Link to ="/forget">
+                  <Link to ="/forget" state = {{userType}}>
                   Forgot Password?
                   </Link>
                 </button>
@@ -112,6 +154,7 @@ function LoginForm() {
             </>
         </div>
       </div>
+      <ToastContainer/>
       <LFooter />
     </>
   );
