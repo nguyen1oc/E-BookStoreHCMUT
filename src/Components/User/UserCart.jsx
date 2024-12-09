@@ -1,17 +1,19 @@
 import React from "react";
 import LFooter from "../Login/LFooter";
 import LHeader from "./LHeader";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link } from "react-router-dom";
 import { useCart } from "./CartContext";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 function UserCart() {
-  const { cart, removeItem, setCart } = useCart(); // Lấy setCart từ context
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { cart, removeItem, setCart } = useCart();
 
   const calculateTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + Number(item.price), 0);
   };
 
   const calculateTotalItems = () => {
@@ -29,11 +31,11 @@ function UserCart() {
   };
 
   const handleRemoveItem = (itemOrder) => {
-    removeItem(itemOrder);
+    removeItem(itemOrder); // Xóa sản phẩm theo order
   };
 
-  // Xử lý khi bấm nút Purchase
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
+    console.log(cart);
     if (cart.length === 0) {
       toast.error("Your cart is empty!", {
         position: "bottom-right",
@@ -47,21 +49,60 @@ function UserCart() {
       return;
     }
 
-    toast.success("Purchase successful!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    const user_id = localStorage.getItem("user_id");
+    const discount_order = calculateTotalItems() > 5 ? 0.1 : 0;
+    try {
+      const response = await fetch('http://localhost:5000/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({user_ID: user_id}),
+      });
 
-    setTimeout(() => {
-      setCart([]);
-      navigate("/userdashboard"); 
-    }, 3000);
-  };
+      if(response.ok) {
+        const order_data = await response.json();
+        const order_id = order_data.order_id;
+
+        const order_items = cart.map((item) => ({
+          book_id: item.book_id,
+          quantity: 1,
+          discount: discount_order
+        }));
+
+        const orderItemResponse = await fetch("http://localhost:5000/order_item", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({order_id: order_id, items: order_items}),
+        });
+
+        if(orderItemResponse.ok) {
+          toast.success("Purchase successful!", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+      
+          setTimeout(() => {
+            setCart([]);
+            navigate("/userdashboard"); 
+          }, 3000);
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
+      }
+    } catch(err) {
+      console.error("Error submitting report:", err);
+      alert("Error submitting report. Please try again.");
+    }
+  }
 
   return (
     <>
@@ -73,30 +114,19 @@ function UserCart() {
           {/* Hiển thị các sản phẩm trong giỏ */}
           {cart.length > 0 ? (
             cart.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between mb-4 p-4 border-b border-gray-300"
-              >
+              <div key={index} className="flex items-center justify-between mb-4 p-4 border-b border-gray-300">
                 <div className="flex items-center">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-16 h-20 object-cover mr-4"
-                  />
+                  <img src={item.image_url} alt={item.title} className="w-16 h-20 object-cover mr-4" />
                   <div>
-                    <h3 className="text-lg font-semibold text-[#2D3250]">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">{item.author}</p>
+                    <h3 className="text-lg font-semibold text-[#2D3250]">{item.title}</h3>
+                    <p className="text-sm text-gray-500">{item.user_name}</p>
                   </div>
                 </div>
                 <div className="text-right mt-3">
-                  <p className="text-lg font-semibold text-[#2D3250]">
-                    {item.price.toLocaleString()} VND
-                  </p>
+                  <p className="text-lg font-semibold text-[#2D3250]">{Number(item.price).toLocaleString("en-US")} VND</p>
                   <button
                     className="text-red-500 text-sm hover:text-red-700"
-                    onClick={() => handleRemoveItem(item.order)}
+                    onClick={() => handleRemoveItem(item.order)} 
                   >
                     Remove
                   </button>
@@ -104,9 +134,7 @@ function UserCart() {
               </div>
             ))
           ) : (
-            <p className="text-center text-xl text-gray-700 mt-20">
-              Your cart is empty.
-            </p>
+            <p className="text-center text-xl text-gray-700 mt-20">Your cart is empty.</p>
           )}
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
@@ -116,32 +144,27 @@ function UserCart() {
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
             <span>Before Discount:</span>
-            <span>{calculateTotalPrice().toLocaleString()} VND</span>
+            <span>{Number(calculateTotalPrice()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-between items-center mt-4">
             <span>Discount:</span>
-            <span className="text-green-600">
-              - {calculateDiscount().toLocaleString()} VND
-            </span>
+            <span className="text-green-600">- {Number(calculateDiscount()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-between items-center mt-6 font-semibold text-[#2D3250]">
             <span>Total:</span>
-            <span>{calculateFinalTotal().toLocaleString()} VND</span>
+            <span>{Number(calculateFinalTotal()).toLocaleString("en-US")} VND</span>
           </div>
 
           <div className="flex justify-center mt-8">
-            <button
-              className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A]"
-              onClick={handlePurchase} // Gọi hàm handlePurchase khi bấm nút
-            >
+            <button onClick={handlePurchase} className="w-full bg-[#7077A1] text-white py-2 px-4 rounded hover:bg-[#F6B17A]">
               Purchase
             </button>
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer/>
       <LFooter />
     </>
   );
