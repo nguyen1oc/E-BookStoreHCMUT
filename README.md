@@ -5,7 +5,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
+- [Acknowledgements](#acknowledgement)
 
 ## Description
 This project is a simple web server allows user to browse, purchase, and read hard or digital books from any device. Designed to cater to book lovers and avid readers, the application offers a seamless experience for discovering new titles, managing a personal library, and accessing content instantly.
