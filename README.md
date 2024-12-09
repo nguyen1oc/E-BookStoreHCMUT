@@ -30,7 +30,7 @@ This project is a simple web server allows user to browse, purchase, and read ha
    npm install express pg dotenv bcrypt body-parser cors nodemon
 
 ## Useage
-1. Run "dbServer.js" to start the server:
+1. Run ---dbServer.js to start the server:
    ```bash
    nodemon dbServer.js
 2. Start the development server:
@@ -39,9 +39,6 @@ This project is a simple web server allows user to browse, purchase, and read ha
 
 ## Contributing
 Contributions are welcome! Please fork this repository and submit a pull request.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 - [Express.js](https://expressjs.com/)
