@@ -1,6 +1,7 @@
 # E-Book Store Application
 ## Table of Contents
 - [Description](#description)
+- [Team members](#teammembers)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -9,6 +10,11 @@
 
 ## Description
 This project is a simple web server allows user to browse, purchase, and read hard or digital books from any device. Designed to cater to book lovers and avid readers, the application offers a seamless experience for discovering new titles, managing a personal library, and accessing content instantly.
+
+## Team members
+- Nguyen Thien Loc - 2252460
+- Tran Trung Vinh - 2252914
+- Nguyen Tran Huy Viet - 2252906
 
 ## Features
 - User authentication with bcrypt
